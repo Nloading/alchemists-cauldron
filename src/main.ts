@@ -7,6 +7,8 @@ import { getState, subscribe } from './state/game-state';
 import { createCauldron } from './ui/cauldron';
 import { createLayout } from './ui/layout';
 import { createShelf } from './ui/shelf';
+import { calculateCauldron } from './logic/calculate-cauldron';
+import { createBars } from './ui/bars';
 
 const root = document.querySelector<HTMLDivElement>('#app');
 
@@ -22,11 +24,14 @@ const shelf = createShelf(
 );
 const cauldron = createCauldron(layout.cauldron);
 
+const bars = createBars(layout.bars);
+
 function render(): void {
   const state = getState();
   const full = isCauldronFull(state.cauldronIngredients, LEVEL_1_SETTINGS.maxCauldronIngredients);
   shelf.update(state.shelfStock, full);
   cauldron.update(state.cauldronIngredients);
+  bars.update(calculateCauldron(state.cauldronIngredients), state.activeRecipe);
 }
 
 subscribe(render);

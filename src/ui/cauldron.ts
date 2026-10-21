@@ -18,7 +18,10 @@ export function createCauldron(container: HTMLElement): ICauldronView {
       list.replaceChildren(
         ...ingredients.map((ingredient) => {
           const item = el('li', 'cauldron__item');
-          item.append(el('span', 'icon icon--' + ingredient.icon), el('span', undefined, ingredient.name));
+          item.append(
+            el('span', 'icon icon--' + ingredient.icon),
+            el('span', undefined, ingredient.name),
+          );
           return item;
         }),
       );
