@@ -1,0 +1,39 @@
+{
+  "name": "alchemists-cauldron",
+  "version": "1.0.0",
+  "description": "Browser potion-brewing game built with TypeScript and Vite (no frameworks).",
+  "main": "index.js",
+  "private": true,
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc --noEmit && vite build",
+    "preview": "vite preview",
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "format": "prettier --write .",
+    "format:check": "prettier --check ."
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Nloading/alchemists-cauldron.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "module",
+  "bugs": {
+    "url": "https://github.com/Nloading/alchemists-cauldron/issues"
+  },
+  "homepage": "https://github.com/Nloading/alchemists-cauldron#readme",
+  "devDependencies": {
+    "@eslint/js": "^10.0.1",
+    "eslint": "^10.13.0",
+    "eslint-config-prettier": "^10.1.8",
+    "globals": "^17.13.0",
+    "prettier": "^3.9.10",
+    "typescript": "^5.9.3",
+    "typescript-eslint": "^8.72.0",
+    "vite": "^8.3.5"
+  }
+}
