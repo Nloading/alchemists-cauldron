@@ -34,6 +34,5 @@ function render(): void {
   bars.update(calculateCauldron(state.cauldronIngredients), state.activeRecipe);
 }
 
-
 subscribe(render);
 render();
