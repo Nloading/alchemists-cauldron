@@ -176,3 +176,108 @@ body {
     padding: 0.5rem;
   }
 }
+
+.panel--bars {
+  grid-column: 1 / -1;
+  display: grid;
+  gap: 1rem;
+}
+
+.bar__head {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.5rem;
+  margin-bottom: 0.35rem;
+  font-size: 0.9rem;
+}
+
+.bar__label {
+  font-weight: 600;
+}
+
+.bar__target {
+  color: #9b8fb5;
+}
+
+.bar__value {
+  min-width: 3ch;
+  text-align: right;
+  font-weight: 700;
+}
+
+.bar__track {
+  position: relative;
+  height: 1.5rem;
+  overflow: hidden;
+  border: 1px solid #3a2f52;
+  border-radius: 999px;
+  background: #120e1b;
+  transition:
+    box-shadow 0.3s ease,
+    border-color 0.3s ease;
+}
+
+.bar__zone {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  background: rgb(141 255 107 / 22%);
+  border-inline: 2px solid #8dff6b;
+  transition:
+    left 0.4s ease,
+    width 0.4s ease;
+}
+
+.bar__fill {
+  position: absolute;
+  top: 25%;
+  bottom: 25%;
+  border-radius: 4px;
+  background: #7b5cff;
+  transition:
+    left 0.4s ease,
+    width 0.4s ease;
+}
+
+.bar__track--temp .bar__fill {
+  background: #e0533d;
+}
+.bar__track--density .bar__fill {
+  background: #3d8be0;
+}
+.bar__track--magic .bar__fill {
+  background: #9b5de5;
+}
+
+.bar__zero {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background: #e8e0f0;
+  opacity: 0.6;
+  transform: translateX(-50%);
+}
+
+.bar__marker {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 4px;
+  background: #fff;
+  transform: translateX(-50%);
+  transition: left 0.4s ease;
+}
+
+.bar__track--in-range {
+  border-color: #8dff6b;
+  box-shadow: 0 0 12px 2px rgb(141 255 107 / 60%);
+}
+
+.bar__scale {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 0.2rem;
+  color: #9b8fb5;
+  font-size: 0.75rem;
+}
