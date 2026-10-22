@@ -1,4 +1,4 @@
-import type { IIngredient, IRecipe, ShelfStock } from '../types';
+import type { BrewResult, IIngredient, IRecipe, ShelfStock } from '../types';
 import { RECIPES } from '../data/recipes';
 import { pickRecipe } from '../logic/recipe-generator';
 import { getShelfIngredients } from '../data/ingredients';
@@ -9,6 +9,9 @@ export interface IGameState {
   cauldronIngredients: IIngredient[];
   shelfStock: ShelfStock;
   activeRecipe: IRecipe;
+  score: number;
+  lives: number;
+  lastBrew: BrewResult | null;
 }
 
 type Listener = () => void;
@@ -18,6 +21,9 @@ export function createNewGameState(): IGameState {
     cauldronIngredients: [],
     shelfStock: createStock(getShelfIngredients(LEVEL_1_SETTINGS.shelfSize)),
     activeRecipe: pickRecipe(RECIPES, LEVEL_1_SETTINGS.difficulty),
+    score: 0,
+    lives: LEVEL_1_SETTINGS.lives,
+    lastBrew: null,
   };
 }
 

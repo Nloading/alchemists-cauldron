@@ -281,3 +281,91 @@ body {
   color: #9b8fb5;
   font-size: 0.75rem;
 }
+
+.panel--hud,
+.panel--recipe,
+.panel--controls {
+  grid-column: 1 / -1;
+}
+
+.panel--hud {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  font-weight: 700;
+}
+
+.recipe__name {
+  margin: 0 0 0.25rem;
+  font-size: 1.25rem;
+  font-weight: 700;
+}
+
+.recipe__counter {
+  margin: 0 0 0.75rem;
+  color: #9b8fb5;
+}
+
+.recipe__ranges {
+  display: grid;
+  gap: 0.35rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.recipe__range {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.recipe__range-value {
+  font-weight: 700;
+}
+
+.panel--controls {
+  display: grid;
+  justify-items: center;
+  gap: 0.75rem;
+}
+
+.brew {
+  padding: 0.75rem 3rem;
+  border: 2px solid #8dff6b;
+  border-radius: 12px;
+  background: #1f3a1a;
+  color: #8dff6b;
+  font: inherit;
+  font-size: 1.25rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition:
+    background 0.15s ease,
+    transform 0.15s ease;
+}
+
+.brew:hover:enabled,
+.brew:focus-visible {
+  background: #2b5222;
+  transform: translateY(-1px);
+}
+
+.brew:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.brew-message {
+  min-height: 1.5em;
+  margin: 0;
+  font-weight: 600;
+}
+
+.brew-message--success {
+  color: #8dff6b;
+}
+
+.brew-message--failure {
+  color: #ff6b6b;
+}
