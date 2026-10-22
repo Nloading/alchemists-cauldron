@@ -1,5 +1,6 @@
 import type { IIngredient, IRecipe, ShelfStock } from '../types';
-import { TEMP_RECIPE } from '../data/recipes';
+import { RECIPES } from '../data/recipes';
+import { pickRecipe } from '../logic/recipe-generator';
 import { getShelfIngredients } from '../data/ingredients';
 import { LEVEL_1_SETTINGS } from '../data/difficulty';
 import { createStock } from '../logic/stock';
@@ -16,7 +17,7 @@ export function createNewGameState(): IGameState {
   return {
     cauldronIngredients: [],
     shelfStock: createStock(getShelfIngredients(LEVEL_1_SETTINGS.shelfSize)),
-    activeRecipe: TEMP_RECIPE,
+        activeRecipe: pickRecipe(RECIPES, LEVEL_1_SETTINGS.difficulty),
   };
 }
 
