@@ -36,7 +36,12 @@ function render(): void {
   const max = LEVEL_1_SETTINGS.maxCauldronIngredients;
   const added = state.cauldronIngredients.length;
 
-  hud.update(state.score, state.lives);
+  hud.update({
+    score: state.score,
+    lives: state.lives,
+    timeLeft: state.timeLeft,
+    startTime: LEVEL_1_SETTINGS.startTimeMs,
+  });
   shelf.update(state.shelfStock, isCauldronFull(state.cauldronIngredients, max));
   cauldron.update(state.cauldronIngredients);
   recipe.update(state.activeRecipe, added, max);
