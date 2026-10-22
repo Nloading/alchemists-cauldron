@@ -1,11 +1,18 @@
 import type { Difficulty, IRecipe } from '../types';
 
+export function getRecipesByDifficulty(
+  recipes: readonly IRecipe[],
+  difficulty: Difficulty,
+): IRecipe[] {
+  return recipes.filter((recipe) => recipe.difficulty === difficulty);
+}
+
 export function pickRecipe(
   recipes: readonly IRecipe[],
   difficulty: Difficulty,
   random: () => number = Math.random,
 ): IRecipe {
-  const pool = recipes.filter((recipe) => recipe.difficulty === difficulty);
+  const pool = getRecipesByDifficulty(recipes, difficulty);
   const recipe = pool[Math.floor(random() * pool.length)];
 
   if (!recipe) {

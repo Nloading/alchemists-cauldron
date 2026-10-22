@@ -369,3 +369,8 @@ body {
 .brew-message--failure {
   color: #ff6b6b;
 }
+
+.recipe__counter--full {
+  color: #ffd166;
+  font-weight: 700;
+}
