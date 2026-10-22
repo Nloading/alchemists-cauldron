@@ -35,3 +35,5 @@ export interface IBarScale {
   min: number;
   max: number;
 }
+
+export type BrewResult = 'success' | 'failure';
