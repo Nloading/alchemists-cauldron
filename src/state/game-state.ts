@@ -17,7 +17,7 @@ export function createNewGameState(): IGameState {
   return {
     cauldronIngredients: [],
     shelfStock: createStock(getShelfIngredients(LEVEL_1_SETTINGS.shelfSize)),
-        activeRecipe: pickRecipe(RECIPES, LEVEL_1_SETTINGS.difficulty),
+    activeRecipe: pickRecipe(RECIPES, LEVEL_1_SETTINGS.difficulty),
   };
 }
 
