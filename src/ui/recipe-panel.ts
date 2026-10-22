@@ -31,6 +31,7 @@ export function createRecipePanel(container: HTMLElement): IRecipePanelView {
     update: (recipe, added, max): void => {
       name.textContent = recipe.name;
       counter.textContent = 'Ingredients: ' + String(added) + ' / ' + String(max);
+        counter.classList.toggle('recipe__counter--full', added >= max);
       for (const row of rows) {
         const range = recipe[row.key];
         row.value.textContent = String(range.min) + '..' + String(range.max);
