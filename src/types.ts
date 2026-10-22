@@ -37,3 +37,6 @@ export interface IBarScale {
 }
 
 export type BrewResult = 'success' | 'failure';
+
+export type GameStatus = 'menu' | 'playing' | 'paused' | 'game-over';
+export type GameOverReason = 'time' | 'lives' | 'ingredients';
