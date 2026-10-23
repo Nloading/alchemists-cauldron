@@ -449,3 +449,40 @@ body::before {
 .dialog__score {
   margin: 0;
 }
+
+.game {
+  transition: filter 0.2s ease;
+}
+
+.game--paused {
+  filter: blur(8px) brightness(0.6);
+  user-select: none;
+  pointer-events: none;
+}
+
+.controls__row {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.75rem;
+}
+
+.pause {
+  padding: 0.75rem 1.5rem;
+  border: 2px solid #8b7cb8;
+  border-radius: 12px;
+  background: #261e38;
+  color: #e8e0f0;
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+  transition:
+    background 0.15s ease,
+    transform 0.15s ease;
+
+  &:hover,
+  &:focus-visible {
+    background: #352a50;
+    transform: translateY(-1px);
+  }
+}
