@@ -34,9 +34,7 @@ export function createHud(container: HTMLElement): IHudView {
       timeFill.classList.toggle('hud__time-fill--critical', critical);
       timeFill.style.width = String((data.timeLeft / data.startTime) * 100) + '%';
 
-      lives.replaceChildren(
-        ...Array.from({ length: data.lives }, () => el('span', 'heart', '♥')),
-      );
+      lives.replaceChildren(...Array.from({ length: data.lives }, () => el('span', 'heart', '♥')));
     },
   };
 }
