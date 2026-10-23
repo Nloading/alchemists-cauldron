@@ -132,3 +132,20 @@ export function resumeGame(): void {
 export function exitToMenu(): void {
   setState(createMenuState());
 }
+
+export function tick(): void {
+  const current = getState();
+
+  if (current.status !== 'playing' || current.endTime === null) {
+    return;
+  }
+
+  const timeLeft = computeTimeLeft(current.endTime, Date.now());
+  const sameSecond = Math.ceil(timeLeft / 1000) === Math.ceil(current.timeLeft / 1000);
+
+  if (timeLeft > 0 && sameSecond) {
+    return;
+  }
+
+  setState(applyOutcome({ ...current, timeLeft }));
+}

@@ -53,7 +53,7 @@ export function createNewGameState(now: number = Date.now()): IGameState {
   };
 }
 
-let state: IGameState = createNewGameState();
+let state: IGameState = createMenuState();
 const listeners = new Set<Listener>();
 
 export function getState(): IGameState {
