@@ -5,4 +5,5 @@ export const LEVEL_1_SETTINGS = {
   tolerance: 8,
   lives: 3,
   scorePerBrew: 200,
+  startTimeMs: 150_000,
 } as const;
