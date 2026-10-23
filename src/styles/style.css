@@ -374,3 +374,111 @@ body {
   color: #ffd166;
   font-weight: 700;
 }
+
+.panel--idle .shelf,
+.panel--idle .recipe__name,
+.panel--idle .recipe__counter,
+.panel--idle .recipe__ranges {
+  visibility: hidden;
+}
+
+.panel--hud {
+  align-items: center;
+}
+
+.hud__time-box {
+  display: grid;
+  gap: 0.35rem;
+  min-width: 10rem;
+}
+
+.hud__time-track {
+  height: 0.5rem;
+  overflow: hidden;
+  border-radius: 999px;
+  background: #120e1b;
+}
+
+.hud__time-fill {
+  height: 100%;
+  background: #8dff6b;
+  transition: width 0.25s linear;
+}
+
+.hud__time-fill--critical {
+  background: #ff6b6b;
+}
+
+.hud__time--critical {
+  color: #ff6b6b;
+  animation: pulse 0.8s ease-in-out infinite;
+}
+
+.hud__lives {
+  display: flex;
+  gap: 0.25rem;
+  min-width: 5rem;
+  justify-content: flex-end;
+}
+
+.heart {
+  color: #ff4d6d;
+  font-size: 1.4rem;
+}
+
+.brew--start {
+  padding-inline: 4rem;
+}
+
+.brew[hidden] {
+  display: none;
+}
+
+.dialog {
+  position: fixed;
+  inset: 0;
+  z-index: 10;
+  display: grid;
+  place-items: center;
+  padding: 1rem;
+  background: rgb(8 5 14 / 80%);
+}
+
+.dialog[hidden] {
+  display: none;
+}
+
+.dialog__box {
+  display: grid;
+  gap: 0.75rem;
+  justify-items: center;
+  width: min(100%, 24rem);
+  padding: 1.5rem;
+  border: 2px solid #8dff6b;
+  border-radius: 14px;
+  background: #1d1729;
+  text-align: center;
+}
+
+.dialog__title {
+  margin: 0;
+  font-size: 2rem;
+  color: #8dff6b;
+}
+
+.dialog__reason,
+.dialog__score {
+  margin: 0;
+}
+
+.dialog__score {
+  font-size: 1.25rem;
+  font-weight: 700;
+}
+
+@keyframes pulse {
+  50% {
+    opacity: 0.45;
+    transform: scale(1.08);
+  }
+}
