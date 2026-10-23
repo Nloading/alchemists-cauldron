@@ -1,4 +1,4 @@
-import './styles/style.css';
+import './styles/style.scss';
 import { LEVEL_1_SETTINGS } from './data/difficulty';
 import { getShelfIngredients } from './data/ingredients';
 import { isCauldronFull } from './logic/add-ingredient';
