@@ -1,4 +1,11 @@
-import type { BrewResult, IIngredient, IRecipe, ShelfStock } from '../types';
+import type {
+  BrewResult,
+  GameOverReason,
+  GameStatus,
+  IIngredient,
+  IRecipe,
+  ShelfStock,
+} from '../types';
 import { RECIPES } from '../data/recipes';
 import { pickRecipe } from '../logic/recipe-generator';
 import { getShelfIngredients } from '../data/ingredients';
@@ -6,28 +13,47 @@ import { LEVEL_1_SETTINGS } from '../data/difficulty';
 import { createStock } from '../logic/stock';
 
 export interface IGameState {
+  status: GameStatus;
   cauldronIngredients: IIngredient[];
   shelfStock: ShelfStock;
   activeRecipe: IRecipe;
   score: number;
   lives: number;
   lastBrew: BrewResult | null;
+  timeLeft: number;
+  endTime: number | null;
+  gameOverReason: GameOverReason | null;
 }
 
 type Listener = () => void;
 
-export function createNewGameState(): IGameState {
+export function createMenuState(): IGameState {
   return {
+    status: 'menu',
     cauldronIngredients: [],
-    shelfStock: createStock(getShelfIngredients(LEVEL_1_SETTINGS.shelfSize)),
+    shelfStock: {},
     activeRecipe: pickRecipe(RECIPES, LEVEL_1_SETTINGS.difficulty),
     score: 0,
-    lives: LEVEL_1_SETTINGS.lives,
+    lives: 0,
     lastBrew: null,
+    timeLeft: 0,
+    endTime: null,
+    gameOverReason: null,
   };
 }
 
-let state: IGameState = createNewGameState();
+export function createNewGameState(now: number = Date.now()): IGameState {
+  return {
+    ...createMenuState(),
+    status: 'playing',
+    shelfStock: createStock(getShelfIngredients(LEVEL_1_SETTINGS.shelfSize)),
+    lives: LEVEL_1_SETTINGS.lives,
+    timeLeft: LEVEL_1_SETTINGS.startTimeMs,
+    endTime: now + LEVEL_1_SETTINGS.startTimeMs,
+  };
+}
+
+let state: IGameState = createMenuState();
 const listeners = new Set<Listener>();
 
 export function getState(): IGameState {

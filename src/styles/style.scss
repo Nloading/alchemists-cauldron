@@ -390,3 +390,99 @@ body::before {
   color: #ffd166;
   font-weight: 700;
 }
+
+[hidden] {
+  display: none !important;
+}
+
+.controls__row {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.75rem;
+}
+
+.pause {
+  padding: 0.75rem 1.5rem;
+  border: 2px solid #9b8fb5;
+  border-radius: 12px;
+  background: #261e38;
+  color: #e8e0f0;
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.pause:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.game--paused {
+  filter: blur(2px);
+}
+
+.dialog {
+  position: fixed;
+  inset: 0;
+  z-index: 10;
+  display: grid;
+  place-items: center;
+  padding: 1rem;
+  background: rgb(10 6 18 / 75%);
+}
+
+.dialog__box {
+  display: grid;
+  justify-items: center;
+  gap: 0.75rem;
+  width: min(100%, 28rem);
+  padding: 2rem;
+  border: 1px solid #4b3d6b;
+  border-radius: 12px;
+  background: #1d1729;
+  text-align: center;
+}
+
+.dialog__title,
+.dialog__message,
+.dialog__score {
+  margin: 0;
+}
+
+.game {
+  transition: filter 0.2s ease;
+}
+
+.game--paused {
+  filter: blur(8px) brightness(0.6);
+  user-select: none;
+  pointer-events: none;
+}
+
+.controls__row {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.75rem;
+}
+
+.pause {
+  padding: 0.75rem 1.5rem;
+  border: 2px solid #8b7cb8;
+  border-radius: 12px;
+  background: #261e38;
+  color: #e8e0f0;
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+  transition:
+    background 0.15s ease,
+    transform 0.15s ease;
+
+  &:hover,
+  &:focus-visible {
+    background: #352a50;
+    transform: translateY(-1px);
+  }
+}
