@@ -1,6 +1,7 @@
 import { el } from './dom';
 
 export interface ILayout {
+  game: HTMLElement;
   hud: HTMLElement;
   shelf: HTMLElement;
   cauldron: HTMLElement;
@@ -19,5 +20,5 @@ export function createLayout(root: HTMLElement): ILayout {
   const controls = el('section', 'panel panel--controls');
   game.append(hud, shelf, cauldron, recipe, bars, controls);
   root.replaceChildren(game);
-  return { hud, shelf, cauldron, recipe, bars, controls };
+  return { game, hud, shelf, cauldron, recipe, bars, controls };
 }
