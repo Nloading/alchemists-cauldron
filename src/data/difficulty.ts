@@ -6,4 +6,5 @@ export const LEVEL_1_SETTINGS = {
   lives: 3,
   scorePerBrew: 200,
   startTimeMs: 150_000,
+  timeBonusMs: 10_000,
 } as const;

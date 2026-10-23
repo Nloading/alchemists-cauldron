@@ -6,7 +6,7 @@ import { isBrewSuccessful } from '../logic/brew-check';
 import { calculateCauldron } from '../logic/calculate-cauldron';
 import { getGameOverReason } from '../logic/game-over';
 import { pickRecipe } from '../logic/recipe-generator';
-import { computeTimeLeft } from '../logic/timer';
+import { addTimeBonus, computeTimeLeft } from '../logic/timer';
 import {
   createMenuState,
   createNewGameState,
@@ -64,16 +64,25 @@ export function addIngredientToCauldron(id: string): void {
 export function brew(): void {
   const current = getState();
 
-  if (current.status !== 'playing' || current.cauldronIngredients.length === 0) {
+  if (
+    current.status !== 'playing' ||
+    current.endTime === null ||
+    current.cauldronIngredients.length === 0
+  ) {
     return;
   }
 
+  const now = Date.now();
   const values = calculateCauldron(current.cauldronIngredients);
   const success = isBrewSuccessful(values, current.activeRecipe, LEVEL_1_SETTINGS.tolerance);
-  const timeLeft =
-    current.endTime === null ? current.timeLeft : computeTimeLeft(current.endTime, Date.now());
+  const timeLeft = computeTimeLeft(current.endTime, now);
 
   if (success) {
+    const nextTimeLeft = addTimeBonus(
+      timeLeft,
+      LEVEL_1_SETTINGS.timeBonusMs,
+      LEVEL_1_SETTINGS.startTimeMs,
+    );
     setState(
       applyOutcome({
         ...current,
@@ -81,7 +90,8 @@ export function brew(): void {
         score: current.score + LEVEL_1_SETTINGS.scorePerBrew,
         activeRecipe: pickRecipe(RECIPES, LEVEL_1_SETTINGS.difficulty),
         lastBrew: 'success',
-        timeLeft,
+        timeLeft: nextTimeLeft,
+        endTime: now + nextTimeLeft,
       }),
     );
     return;

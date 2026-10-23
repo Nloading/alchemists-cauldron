@@ -1,3 +1,8 @@
+import { LEVEL_1_SETTINGS } from '../data/difficulty';
+import { getShelfIngredients } from '../data/ingredients';
+import { RECIPES } from '../data/recipes';
+import { createStock } from '../logic/stock';
+import { pickRecipe } from '../logic/recipe-generator';
 import type {
   BrewResult,
   GameOverReason,
@@ -6,11 +11,6 @@ import type {
   IRecipe,
   ShelfStock,
 } from '../types';
-import { RECIPES } from '../data/recipes';
-import { pickRecipe } from '../logic/recipe-generator';
-import { getShelfIngredients } from '../data/ingredients';
-import { LEVEL_1_SETTINGS } from '../data/difficulty';
-import { createStock } from '../logic/stock';
 
 export interface IGameState {
   status: GameStatus;

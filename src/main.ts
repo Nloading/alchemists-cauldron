@@ -62,7 +62,12 @@ function render(): void {
   layout.game.classList.toggle('game--paused', paused);
   layout.game.inert = paused || state.status === 'game-over';
 
-  hud.update(state.score, state.lives);
+  hud.update({
+    score: state.score,
+    lives: state.lives,
+    timeLeft: state.timeLeft,
+    startTime: LEVEL_1_SETTINGS.startTimeMs,
+  });
   shelf.update(state.shelfStock, blocked);
   cauldron.update(state.cauldronIngredients);
   recipe.update(state.activeRecipe, added, max);
