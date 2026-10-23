@@ -11,6 +11,9 @@ export type ShelfStock = Record<string, number>;
 
 export type Difficulty = 'easy' | 'medium' | 'hard';
 
+export type GameOverReason = 'lives' | 'time' | 'ingredients';
+export type GameStatus = 'menu' | 'playing' | 'paused' | 'game-over';
+
 export interface ICauldronValues {
   temperature: number;
   density: number;
@@ -37,6 +40,3 @@ export interface IBarScale {
 }
 
 export type BrewResult = 'success' | 'failure';
-
-export type GameStatus = 'menu' | 'playing' | 'paused' | 'game-over';
-export type GameOverReason = 'time' | 'lives' | 'ingredients';

@@ -4,12 +4,28 @@
   box-sizing: border-box;
 }
 
+$bg-fallback: #14101c;
+
 body {
   margin: 0;
   min-height: 100vh;
-  background: #14101c;
   color: #e8e0f0;
   font-family: system-ui, sans-serif;
+  background-color: $bg-fallback;
+}
+
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  background:
+    linear-gradient(rgb(10 6 18 / 65%), rgb(10 6 18 / 65%)),
+    url('../assets/backgrounds/alchemy-room.webp') center / cover no-repeat;
+}
+
+[hidden] {
+  display: none !important;
 }
 
 .game {
@@ -430,8 +446,50 @@ body {
   padding-inline: 4rem;
 }
 
-.brew[hidden] {
-  display: none;
+[hidden] {
+  display: none !important;
+}
+
+.controls__row {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.75rem;
+}
+
+.pause {
+  padding: 0.75rem 1.5rem;
+  border: 2px solid #8b7cb8;
+  border-radius: 12px;
+  background: #261e38;
+  color: #e8e0f0;
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+  transition:
+    background 0.15s ease,
+    transform 0.15s ease;
+
+  &:hover,
+  &:focus-visible {
+    background: #352a50;
+    transform: translateY(-1px);
+  }
+}
+
+.pause:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.game {
+  transition: filter 0.2s ease;
+}
+
+.game--paused {
+  filter: blur(8px) brightness(0.6);
+  user-select: none;
+  pointer-events: none;
 }
 
 .dialog {
@@ -441,21 +499,17 @@ body {
   display: grid;
   place-items: center;
   padding: 1rem;
-  background: rgb(8 5 14 / 80%);
-}
-
-.dialog[hidden] {
-  display: none;
+  background: rgb(10 6 18 / 75%);
 }
 
 .dialog__box {
   display: grid;
-  gap: 0.75rem;
   justify-items: center;
-  width: min(100%, 24rem);
-  padding: 1.5rem;
-  border: 2px solid #8dff6b;
-  border-radius: 14px;
+  gap: 0.75rem;
+  width: min(100%, 28rem);
+  padding: 2rem;
+  border: 1px solid #4b3d6b;
+  border-radius: 12px;
   background: #1d1729;
   text-align: center;
 }
@@ -466,6 +520,7 @@ body {
   color: #8dff6b;
 }
 
+.dialog__message,
 .dialog__reason,
 .dialog__score {
   margin: 0;

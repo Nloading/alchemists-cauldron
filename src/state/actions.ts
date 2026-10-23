@@ -7,7 +7,13 @@ import { calculateCauldron } from '../logic/calculate-cauldron';
 import { getGameOverReason } from '../logic/game-over';
 import { pickRecipe } from '../logic/recipe-generator';
 import { addTimeBonus, computeTimeLeft } from '../logic/timer';
-import { createNewGameState, getState, setState, type IGameState } from './game-state';
+import {
+  createMenuState,
+  createNewGameState,
+  getState,
+  setState,
+  type IGameState,
+} from './game-state';
 
 function applyOutcome(next: IGameState): IGameState {
   const reason = getGameOverReason({
@@ -69,10 +75,11 @@ export function brew(): void {
   const now = Date.now();
   const values = calculateCauldron(current.cauldronIngredients);
   const success = isBrewSuccessful(values, current.activeRecipe, LEVEL_1_SETTINGS.tolerance);
+  const timeLeft = computeTimeLeft(current.endTime, now);
 
   if (success) {
-    const timeLeft = addTimeBonus(
-      computeTimeLeft(current.endTime, now),
+    const nextTimeLeft = addTimeBonus(
+      timeLeft,
       LEVEL_1_SETTINGS.timeBonusMs,
       LEVEL_1_SETTINGS.startTimeMs,
     );
@@ -83,8 +90,8 @@ export function brew(): void {
         score: current.score + LEVEL_1_SETTINGS.scorePerBrew,
         activeRecipe: pickRecipe(RECIPES, LEVEL_1_SETTINGS.difficulty),
         lastBrew: 'success',
-        timeLeft,
-        endTime: now + timeLeft,
+        timeLeft: nextTimeLeft,
+        endTime: now + nextTimeLeft,
       }),
     );
     return;
@@ -96,9 +103,44 @@ export function brew(): void {
       cauldronIngredients: [],
       lives: Math.max(0, current.lives - 1),
       lastBrew: 'failure',
-      timeLeft: computeTimeLeft(current.endTime, now),
+      timeLeft,
     }),
   );
+}
+
+export function pauseGame(): void {
+  const current = getState();
+
+  if (current.status !== 'playing' || current.endTime === null) {
+    return;
+  }
+
+  setState(
+    applyOutcome({
+      ...current,
+      status: 'paused',
+      timeLeft: computeTimeLeft(current.endTime, Date.now()),
+      endTime: null,
+    }),
+  );
+}
+
+export function resumeGame(): void {
+  const current = getState();
+
+  if (current.status !== 'paused') {
+    return;
+  }
+
+  setState({
+    ...current,
+    status: 'playing',
+    endTime: Date.now() + current.timeLeft,
+  });
+}
+
+export function exitToMenu(): void {
+  setState(createMenuState());
 }
 
 export function tick(): void {

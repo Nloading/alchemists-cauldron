@@ -9,6 +9,7 @@ const MESSAGES: Record<BrewResult, string> = {
 export interface IControlsHandlers {
   onBrew: () => void;
   onStart: () => void;
+  onPause: () => void;
 }
 
 export interface IControlsView {
@@ -31,17 +32,28 @@ export function createControls(
     handlers.onBrew();
   });
 
+  const pause = el('button', 'pause', 'Pause');
+  pause.type = 'button';
+  pause.addEventListener('click', () => {
+    handlers.onPause();
+  });
+
+  const row = el('div', 'controls__row');
+  row.append(brewButton, pause);
+
   const message = el('p', 'brew-message');
   message.setAttribute('role', 'status');
 
-  container.replaceChildren(start, brewButton, message);
+  container.replaceChildren(start, row, message);
 
   return {
     update: (status, canBrew, result): void => {
       const inMenu = status === 'menu';
+      const playing = status === 'playing';
       start.hidden = !inMenu;
-      brewButton.hidden = inMenu;
-      brewButton.disabled = !canBrew || status !== 'playing';
+      row.hidden = inMenu;
+      pause.hidden = !playing;
+      brewButton.disabled = !canBrew || !playing;
       message.textContent = result === null || inMenu ? '' : MESSAGES[result];
       message.classList.toggle('brew-message--success', result === 'success');
       message.classList.toggle('brew-message--failure', result === 'failure');
