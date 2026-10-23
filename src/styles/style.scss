@@ -4,12 +4,28 @@
   box-sizing: border-box;
 }
 
+$bg-fallback: #14101c;
+
 body {
   margin: 0;
   min-height: 100vh;
-  background: #14101c;
   color: #e8e0f0;
   font-family: system-ui, sans-serif;
+  background-color: $bg-fallback;
+}
+
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  background:
+    linear-gradient(rgb(10 6 18 / 65%), rgb(10 6 18 / 65%)),
+    url('../assets/backgrounds/alchemy-room.webp') center / cover no-repeat;
+}
+
+[hidden] {
+  display: none !important;
 }
 
 .game {
