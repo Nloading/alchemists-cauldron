@@ -11,6 +11,8 @@ export type ShelfStock = Record<string, number>;
 
 export type Difficulty = 'easy' | 'medium' | 'hard';
 
+export type GameOverReason = 'lives' | 'time' | 'ingredients';
+
 export interface ICauldronValues {
   temperature: number;
   density: number;
