@@ -44,7 +44,7 @@ export function createControls(
   const settings = el('button', 'pause', 'Settings');
   settings.type = 'button';
   settings.addEventListener('click', () => {
-  handlers.onSettings();
+    handlers.onSettings();
   });
 
   const brewButton = el('button', 'brew', 'Brew');
