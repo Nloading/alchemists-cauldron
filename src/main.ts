@@ -10,6 +10,7 @@ import {
   exitToMenu,
   pauseGame,
   resumeGame,
+  selectDifficulty,
   startGame,
   tick,
 } from './state/actions';
@@ -27,6 +28,8 @@ import { createLeaderboardDialog } from './ui/leaderboard-dialog';
 import { createPauseDialog } from './ui/pause-dialog';
 import { createRecipePanel } from './ui/recipe-panel';
 import { createShelf } from './ui/shelf';
+import { createSettingsDialog } from './ui/settings-dialog';
+import type { Difficulty } from './types';
 
 const root = document.querySelector<HTMLDivElement>('#app');
 
@@ -41,20 +44,28 @@ const cauldron = createCauldron(layout.cauldron);
 const recipe = createRecipePanel(layout.recipe);
 const bars = createBars(layout.bars);
 
+let boardDifficulty: Difficulty = getState().difficulty;
+
 const confirmDialog = createConfirmDialog(root);
 const leaderboard = createLeaderboardDialog(root, {
+  onSelect: (difficulty) => {
+    openLeaderboard(difficulty);
+  },
   onClearRequest: () => {
-    confirmDialog.ask('Clear the whole leaderboard? This cannot be undone.', () => {
-      clearLeaderboard();
-      leaderboard.show([]);
+    const label = DIFFICULTY_SETTINGS[boardDifficulty].label;
+    confirmDialog.ask('Clear the ' + label + ' leaderboard? This cannot be undone.', () => {
+      clearLeaderboard(boardDifficulty);
+      openLeaderboard(boardDifficulty);
     });
   },
 });
 
-function openLeaderboard(): void {
-  leaderboard.show(loadLeaderboard());
+function openLeaderboard(difficulty: Difficulty = getState().difficulty): void {
+  boardDifficulty = difficulty;
+  leaderboard.show(difficulty, loadLeaderboard(difficulty));
 }
 
+const settingsDialog = createSettingsDialog(root, selectDifficulty);
 const help = createHelpDialog(root);
 const controls = createControls(layout.controls, {
   onBrew: brew,
@@ -62,11 +73,13 @@ const controls = createControls(layout.controls, {
   onPause: pauseGame,
   onLeaderboard: openLeaderboard,
   onHelp: help.show,
+  onSettings: settingsDialog.show,
 });
 const gameOver = createGameOver(root, {
   onPlayAgain: startGame,
   onSubmit: (name) => {
-    submitEntry(name, getState().score, Date.now());
+    const { difficulty, score } = getState();
+    submitEntry(difficulty, name, score, Date.now());
   },
   onShowLeaderboard: openLeaderboard,
 });
@@ -107,8 +120,9 @@ function render(): void {
   recipe.update(state.activeRecipe, added, max);
   bars.update(calculateCauldron(state.cauldronIngredients), state.activeRecipe);
   controls.update(state.status, added > 0, state.lastBrew);
+  settingsDialog.update(state.difficulty);
 
-  const canSubmit = isOver && qualifiesForTop10(loadLeaderboard(), state.score);
+  const canSubmit = isOver && qualifiesForTop10(loadLeaderboard(state.difficulty), state.score);
   gameOver.update(isOver, state.score, state.gameOverReason, canSubmit);
   pauseDialog.update(paused);
 }
