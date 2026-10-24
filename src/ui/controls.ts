@@ -11,6 +11,7 @@ export interface IControlsHandlers {
   onStart: () => void;
   onPause: () => void;
   onLeaderboard: () => void;
+  onHelp: () => void;
 }
 
 export interface IControlsView {
@@ -33,6 +34,12 @@ export function createControls(
     handlers.onLeaderboard();
   });
 
+  const help = el('button', 'pause', 'Help');
+  help.type = 'button';
+  help.addEventListener('click', () => {
+    handlers.onHelp();
+  });
+
   const brewButton = el('button', 'brew', 'Brew');
   brewButton.type = 'button';
   brewButton.addEventListener('click', () => {
@@ -51,7 +58,7 @@ export function createControls(
   const message = el('p', 'brew-message');
   message.setAttribute('role', 'status');
 
-  container.replaceChildren(start, board, row, message);
+  container.replaceChildren(start, board, help, row, message);
 
   return {
     update: (status, canBrew, result): void => {
@@ -59,6 +66,7 @@ export function createControls(
       const playing = status === 'playing';
       start.hidden = !inMenu;
       board.hidden = !inMenu;
+      help.hidden = !inMenu;
       row.hidden = inMenu;
       pause.hidden = !playing;
       brewButton.disabled = !canBrew || !playing;
