@@ -13,10 +13,16 @@ export interface IControlsHandlers {
   onLeaderboard: () => void;
   onHelp: () => void;
   onSettings: () => void;
+  onContinue: () => void;
 }
 
 export interface IControlsView {
-  update: (status: GameStatus, canBrew: boolean, result: BrewResult | null) => void;
+  update: (
+    status: GameStatus,
+    canBrew: boolean,
+    result: BrewResult | null,
+    canContinue: boolean,
+  ) => void;
 }
 
 export function createControls(
@@ -27,6 +33,12 @@ export function createControls(
   start.type = 'button';
   start.addEventListener('click', () => {
     handlers.onStart();
+  });
+
+  const continueButton = el('button', 'brew brew--start', 'Continue Game');
+  continueButton.type = 'button';
+  continueButton.addEventListener('click', () => {
+    handlers.onContinue();
   });
 
   const board = el('button', 'pause', 'Leaderboard');
@@ -65,16 +77,17 @@ export function createControls(
   const message = el('p', 'brew-message');
   message.setAttribute('role', 'status');
 
-  container.replaceChildren(start, board, help, settings, row, message);
+  container.replaceChildren(start, board, help, settings, continueButton, row, message);
 
   return {
-    update: (status, canBrew, result): void => {
+    update: (status, canBrew, result, canContinue): void => {
       const inMenu = status === 'menu';
       const playing = status === 'playing';
       start.hidden = !inMenu;
       board.hidden = !inMenu;
       help.hidden = !inMenu;
       settings.hidden = !inMenu;
+      continueButton.hidden = !inMenu || !canContinue;
       row.hidden = inMenu;
       pause.hidden = !playing;
       brewButton.disabled = !canBrew || !playing;
