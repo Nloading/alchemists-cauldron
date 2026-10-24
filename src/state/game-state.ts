@@ -1,5 +1,5 @@
 import { DEFAULT_DIFFICULTY, DIFFICULTY_SETTINGS } from '../data/difficulty';
-import { getShelfIngredients } from '../data/ingredients';
+import { getShelfIngredients, INGREDIENTS } from '../data/ingredients';
 import { RECIPES } from '../data/recipes';
 import { pickRecipe } from '../logic/recipe-generator';
 import { createStock } from '../logic/stock';
@@ -11,6 +11,7 @@ import type {
   IIngredient,
   IRecipe,
   ShelfStock,
+  ISaveData
 } from '../types';
 
 export interface IGameState {
@@ -74,4 +75,33 @@ export function setState(next: IGameState): void {
 
 export function subscribe(listener: Listener): void {
   listeners.add(listener);
+}
+
+export function createRestoredState(save: ISaveData): IGameState | null {
+  const activeRecipe = RECIPES.find((recipe) => recipe.id === save.activeRecipe.id);
+  const cauldronIngredients: IIngredient[] = [];
+
+  for (const saved of save.cauldronIngredients) {
+    const ingredient = INGREDIENTS.find((item) => item.id === saved.id);
+
+    if (ingredient === undefined) {
+      return null;
+    }
+    cauldronIngredients.push(ingredient);
+  }
+
+  if (activeRecipe === undefined) {
+    return null;
+  }
+
+  return {
+    ...createMenuState(save.difficulty),
+    status: 'paused',
+    cauldronIngredients,
+    shelfStock: { ...save.shelfStock },
+    activeRecipe,
+    score: save.score,
+    lives: save.lives,
+    timeLeft: save.timeLeft,
+  };
 }
