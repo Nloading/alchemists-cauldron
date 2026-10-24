@@ -3,6 +3,7 @@ import { LEVEL_1_SETTINGS } from './data/difficulty';
 import { getShelfIngredients } from './data/ingredients';
 import { isCauldronFull } from './logic/add-ingredient';
 import { calculateCauldron } from './logic/calculate-cauldron';
+import { qualifiesForTop10 } from './logic/leaderboard';
 import {
   addIngredientToCauldron,
   brew,
@@ -13,6 +14,7 @@ import {
   tick,
 } from './state/actions';
 import { getState, subscribe } from './state/game-state';
+import { clearLeaderboard, loadLeaderboard, submitEntry } from './storage/leaderboard';
 import { createBars } from './ui/bars';
 import { createCauldron } from './ui/cauldron';
 import { createControls } from './ui/controls';
@@ -22,6 +24,8 @@ import { createRecipePanel } from './ui/recipe-panel';
 import { createShelf } from './ui/shelf';
 import { createPauseDialog } from './ui/pause-dialog';
 import { createGameOver } from './ui/game-over';
+import { createLeaderboardDialog } from './ui/leaderboard-dialog';
+import { createConfirmDialog } from './ui/confirm-dialog';
 
 const root = document.querySelector<HTMLDivElement>('#app');
 
@@ -39,12 +43,33 @@ const shelf = createShelf(
 const cauldron = createCauldron(layout.cauldron);
 const recipe = createRecipePanel(layout.recipe);
 const bars = createBars(layout.bars);
+const confirmDialog = createConfirmDialog(root);
+const leaderboard = createLeaderboardDialog(root, {
+  onClearRequest: () => {
+    confirmDialog.ask('Clear the whole leaderboard? This cannot be undone.', () => {
+      clearLeaderboard();
+      leaderboard.show([]);
+    });
+  },
+});
+
+function openLeaderboard(): void {
+  leaderboard.show(loadLeaderboard());
+}
+
 const controls = createControls(layout.controls, {
   onBrew: brew,
   onStart: startGame,
   onPause: pauseGame,
+  onLeaderboard: openLeaderboard,
 });
-const gameOver = createGameOver(root, startGame);
+const gameOver = createGameOver(root, {
+  onPlayAgain: startGame,
+  onSubmit: (name) => {
+    submitEntry(name, getState().score, Date.now());
+  },
+  onShowLeaderboard: openLeaderboard,
+});
 const pauseDialog = createPauseDialog(root, { onResume: resumeGame, onExit: exitToMenu });
 
 function render(): void {
@@ -73,7 +98,9 @@ function render(): void {
   recipe.update(state.activeRecipe, added, max);
   bars.update(calculateCauldron(state.cauldronIngredients), state.activeRecipe);
   controls.update(state.status, added > 0 && !blocked, state.lastBrew);
-  gameOver.update(state.status === 'game-over', state.gameOverReason, state.score);
+  const isOver = state.status === 'game-over';
+  const canSubmit = isOver && qualifiesForTop10(loadLeaderboard(), state.score);
+  gameOver.update(isOver, state.score, state.gameOverReason, canSubmit);
   pauseDialog.update(paused);
 }
 
