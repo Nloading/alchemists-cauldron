@@ -166,3 +166,11 @@ export function resumeGame(): void {
 export function exitToMenu(): void {
   setState(createMenuState(getState().difficulty));
 }
+
+export function restoreGame(restored: IGameState): void {
+  if (getState().status !== 'menu') {
+    return;
+  }
+
+  setState(restored);
+}
