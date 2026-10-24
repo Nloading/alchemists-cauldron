@@ -15,7 +15,7 @@ export interface IHudView {
 
 export function createHud(container: HTMLElement): IHudView {
   const score = el('span', 'hud__score');
-    const difficulty = el('span', 'hud__difficulty');
+  const difficulty = el('span', 'hud__difficulty');
   const timeLabel = el('span', 'hud__time');
   const timeFill = el('div', 'hud__time-fill');
   const timeTrack = el('div', 'hud__time-track');
