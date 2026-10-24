@@ -58,3 +58,17 @@ export interface ISaveData {
   shelfStock: ShelfStock;
   status: 'playing' | 'paused';
 }
+
+export interface IReactionEffects {
+  timePenaltyMs?: number;
+  lifeLoss?: number;
+  clearsCauldron?: boolean;
+}
+
+export interface IReaction extends IReactionEffects {
+  id: string;
+  name: string;
+  difficulty: Exclude<Difficulty, 'easy'>;
+  isActive: (ingredients: readonly IIngredient[]) => boolean;
+  apply: (values: ICauldronValues) => ICauldronValues;
+}
