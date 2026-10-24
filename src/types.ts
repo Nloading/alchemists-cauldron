@@ -40,3 +40,9 @@ export interface IBarScale {
 }
 
 export type BrewResult = 'success' | 'failure';
+
+export interface ILeaderboardEntry {
+  name: string;
+  score: number;
+  timestamp: number;
+}
