@@ -3,7 +3,12 @@ import { INGREDIENTS } from '../data/ingredients';
 import { RECIPES } from '../data/recipes';
 import { addIngredient } from '../logic/add-ingredient';
 import { isBrewSuccessful } from '../logic/brew-check';
-import { calculateCauldron } from '../logic/calculate-cauldron';
+import {
+  calculateWithReactions,
+  findFiredReactions,
+  getActiveReactions,
+  summarizeEffects,
+} from '../logic/reactions';
 import { getGameOverReason } from '../logic/game-over';
 import { pickRecipe } from '../logic/recipe-generator';
 import { addTimeBonus, computeTimeLeft } from '../logic/timer';
@@ -48,7 +53,7 @@ export function startGame(): void {
 export function addIngredientToCauldron(id: string): void {
   const current = getState();
 
-  if (current.status !== 'playing') {
+  if (current.status !== 'playing' || current.endTime === null) {
     return;
   }
 
@@ -69,7 +74,27 @@ export function addIngredientToCauldron(id: string): void {
     return;
   }
 
-  setState({ ...current, ...result, lastBrew: null });
+  const now = Date.now();
+  const fired = findFiredReactions(
+    getActiveReactions(current.difficulty),
+    current.cauldronIngredients,
+    result.cauldronIngredients,
+  );
+  const effects = summarizeEffects(fired);
+  const timeLeft = Math.max(0, computeTimeLeft(current.endTime, now) - effects.timePenaltyMs);
+
+  setState(
+    applyOutcome({
+      ...current,
+      ...result,
+      cauldronIngredients: effects.clearsCauldron ? [] : result.cauldronIngredients,
+      lives: Math.max(0, current.lives - effects.lifeLoss),
+      timeLeft,
+      endTime: now + timeLeft,
+      lastBrew: null,
+      lastReactionId: fired[0]?.id ?? null,
+    }),
+  );
 }
 
 export function brew(): void {
@@ -85,7 +110,10 @@ export function brew(): void {
 
   const settings = DIFFICULTY_SETTINGS[current.difficulty];
   const now = Date.now();
-  const values = calculateCauldron(current.cauldronIngredients);
+  const values = calculateWithReactions(
+    current.cauldronIngredients,
+    getActiveReactions(current.difficulty),
+  );
   const success = isBrewSuccessful(values, current.activeRecipe, settings.tolerance);
 
   if (success) {
@@ -103,6 +131,7 @@ export function brew(): void {
         lastBrew: 'success',
         timeLeft,
         endTime: now + timeLeft,
+        lastReactionId: null,
       }),
     );
     return;
@@ -114,6 +143,7 @@ export function brew(): void {
       cauldronIngredients: [],
       lives: Math.max(0, current.lives - 1),
       lastBrew: 'failure',
+      lastReactionId: null,
       timeLeft: computeTimeLeft(current.endTime, now),
     }),
   );
