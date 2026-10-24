@@ -16,7 +16,10 @@ Built with TypeScript, Vite and SCSS. No frameworks or game libraries.
   - timestamp-based timer, lives, game over with a reason
   - pause (manual and when the tab is hidden)
   - Top-10 leaderboard in localStorage
-- **Level 2:** not implemented yet.
+  - **Level 2:**
+    - Settings panel with Easy / Medium / Hard (shelf size, cauldron limit, time, tolerance, lives, score, time bonus from one settings table)
+    - one Top-10 leaderboard per difficulty with a Difficulty column
+    - autosave to localStorage and **Continue Game** (opens paused; broken saves are discarded)
 - **Level 3:** not implemented yet.
 
 ## How to play
@@ -28,7 +31,7 @@ Built with TypeScript, Vite and SCSS. No frameworks or game libraries.
 5. Click **Brew**. Success gives +200 score and +10 seconds. Failure costs one life.
 6. The game ends when time runs out, lives reach zero, or ingredients run out.
 7. If your score is in the Top-10, enter a name (2–15 characters: letters, digits, space, `_`, `-`).
-
+8. Use **Settings** on the start screen to choose a difficulty, and **Continue Game** to resume an unfinished game after a reload.
 Other controls: **Pause**, **Help**, **Leaderboard**.
 
 ## Run locally
@@ -60,3 +63,4 @@ Story branches (`story-1`, `story-2`, `story-3`), feature branches per task, sma
 - Level 1 time cap: the bonus never raises the clock above the start time (150 s).
 - Recipe zones on the bars show the exact recipe range; the ±8 tolerance applies only when brewing.
 - Level 1 settings are the Medium column of the difficulty table.
+- Medium matches the Level 1 rule set. Reaction counts (Level 3): Medium 2, Hard 3, chosen so each reaction can be triggered with that difficulty's ingredients.
