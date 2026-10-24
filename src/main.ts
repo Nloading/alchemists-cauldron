@@ -117,4 +117,5 @@ document.addEventListener('visibilitychange', () => {
   }
 });
 
-window.setInterval(tick, 1000);
+// Heartbeat only: remaining time is always computed from timestamps, not counted by ticks.
+window.setInterval(tick, 250);
