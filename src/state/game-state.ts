@@ -26,6 +26,7 @@ export interface IGameState {
   timeLeft: number;
   endTime: number | null;
   gameOverReason: GameOverReason | null;
+  lastReactionId: string | null;
 }
 
 type Listener = () => void;
@@ -40,6 +41,7 @@ export function createMenuState(difficulty: Difficulty = DEFAULT_DIFFICULTY): IG
     score: 0,
     lives: 0,
     lastBrew: null,
+    lastReactionId: null,
     timeLeft: 0,
     endTime: null,
     gameOverReason: null,
