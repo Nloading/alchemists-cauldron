@@ -21,10 +21,7 @@ export function compareEntries(a: ILeaderboardEntry, b: ILeaderboardEntry): numb
   return b.score - a.score || a.timestamp - b.timestamp;
 }
 
-export function qualifiesForTop10(
-  entries: readonly ILeaderboardEntry[],
-  score: number,
-): boolean {
+export function qualifiesForTop10(entries: readonly ILeaderboardEntry[], score: number): boolean {
   if (score <= 0) {
     return false;
   }
