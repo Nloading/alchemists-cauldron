@@ -12,7 +12,8 @@
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "format": "prettier --write .",
-    "format:check": "prettier --check ."
+    "format:check": "prettier --check .",
+    "prepare": "husky"
   },
   "repository": {
     "type": "git",
@@ -27,11 +28,15 @@
   },
   "homepage": "https://github.com/Nloading/alchemists-cauldron#readme",
   "devDependencies": {
+    "@commitlint/cli": "^21.2.4",
+    "@commitlint/config-conventional": "^21.2.4",
     "@eslint/js": "^10.0.1",
     "eslint": "^10.13.0",
     "eslint-config-prettier": "^10.1.8",
     "globals": "^17.13.0",
+    "husky": "^9.1.7",
     "prettier": "^3.9.10",
+    "sass": "^1.106.1",
     "typescript": "^5.9.3",
     "typescript-eslint": "^8.72.0",
     "vite": "^8.3.5"
