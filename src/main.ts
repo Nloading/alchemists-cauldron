@@ -9,6 +9,7 @@ import {
   brew,
   exitToMenu,
   pauseGame,
+  restoreGame,
   resumeGame,
   selectDifficulty,
   startGame,
@@ -30,6 +31,7 @@ import { createRecipePanel } from './ui/recipe-panel';
 import { createShelf } from './ui/shelf';
 import { createSettingsDialog } from './ui/settings-dialog';
 import type { Difficulty } from './types';
+import { clearSave, loadGame, saveGame } from './storage/save';
 
 const root = document.querySelector<HTMLDivElement>('#app');
 
@@ -74,6 +76,15 @@ const controls = createControls(layout.controls, {
   onLeaderboard: openLeaderboard,
   onHelp: help.show,
   onSettings: settingsDialog.show,
+    onContinue: () => {
+    const restored = loadGame();
+
+    if (restored === null) {
+      render();
+      return;
+    }
+    restoreGame(restored);
+  },
 });
 const gameOver = createGameOver(root, {
   onPlayAgain: startGame,
@@ -83,7 +94,14 @@ const gameOver = createGameOver(root, {
   },
   onShowLeaderboard: openLeaderboard,
 });
-const pauseDialog = createPauseDialog(root, { onResume: resumeGame, onExit: exitToMenu });
+const pauseDialog = createPauseDialog(root, {
+  onResume: resumeGame,
+  onExit: () => {
+    // Clear first: the menu render checks the save and must not see a stale one.
+    clearSave();
+    exitToMenu();
+  },
+});
 
 let renderedShelfSize = -1;
 
@@ -119,7 +137,7 @@ function render(): void {
   cauldron.update(state.cauldronIngredients);
   recipe.update(state.activeRecipe, added, max);
   bars.update(calculateCauldron(state.cauldronIngredients), state.activeRecipe);
-  controls.update(state.status, added > 0, state.lastBrew);
+  controls.update(state.status, added > 0, state.lastBrew, inMenu && loadGame() !== null);
   settingsDialog.update(state.difficulty);
 
   const canSubmit = isOver && qualifiesForTop10(loadLeaderboard(state.difficulty), state.score);
@@ -128,6 +146,15 @@ function render(): void {
 }
 
 subscribe(render);
+subscribe(() => {
+  const state = getState();
+
+  if (state.status === 'game-over') {
+    clearSave();
+  } else if (state.status !== 'menu') {
+    saveGame(state);
+  }
+});
 render();
 
 // Heartbeat only: remaining time is always computed from timestamps, not counted by ticks.
