@@ -1,10 +1,11 @@
-import { LEVEL_1_SETTINGS } from '../data/difficulty';
+import { DEFAULT_DIFFICULTY, DIFFICULTY_SETTINGS } from '../data/difficulty';
 import { getShelfIngredients } from '../data/ingredients';
 import { RECIPES } from '../data/recipes';
-import { createStock } from '../logic/stock';
 import { pickRecipe } from '../logic/recipe-generator';
+import { createStock } from '../logic/stock';
 import type {
   BrewResult,
+  Difficulty,
   GameOverReason,
   GameStatus,
   IIngredient,
@@ -14,6 +15,7 @@ import type {
 
 export interface IGameState {
   status: GameStatus;
+  difficulty: Difficulty;
   cauldronIngredients: IIngredient[];
   shelfStock: ShelfStock;
   activeRecipe: IRecipe;
@@ -27,12 +29,13 @@ export interface IGameState {
 
 type Listener = () => void;
 
-export function createMenuState(): IGameState {
+export function createMenuState(difficulty: Difficulty = DEFAULT_DIFFICULTY): IGameState {
   return {
     status: 'menu',
+    difficulty,
     cauldronIngredients: [],
     shelfStock: {},
-    activeRecipe: pickRecipe(RECIPES, LEVEL_1_SETTINGS.difficulty),
+    activeRecipe: pickRecipe(RECIPES, difficulty),
     score: 0,
     lives: 0,
     lastBrew: null,
@@ -42,14 +45,16 @@ export function createMenuState(): IGameState {
   };
 }
 
-export function createNewGameState(now: number = Date.now()): IGameState {
+export function createNewGameState(difficulty: Difficulty, now: number = Date.now()): IGameState {
+  const settings = DIFFICULTY_SETTINGS[difficulty];
+
   return {
-    ...createMenuState(),
+    ...createMenuState(difficulty),
     status: 'playing',
-    shelfStock: createStock(getShelfIngredients(LEVEL_1_SETTINGS.shelfSize)),
-    lives: LEVEL_1_SETTINGS.lives,
-    timeLeft: LEVEL_1_SETTINGS.startTimeMs,
-    endTime: now + LEVEL_1_SETTINGS.startTimeMs,
+    shelfStock: createStock(getShelfIngredients(settings.shelfSize)),
+    lives: settings.lives,
+    timeLeft: settings.startTimeMs,
+    endTime: now + settings.startTimeMs,
   };
 }
 
