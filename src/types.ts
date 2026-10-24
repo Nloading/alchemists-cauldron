@@ -45,4 +45,16 @@ export interface ILeaderboardEntry {
   name: string;
   score: number;
   timestamp: number;
+  difficulty: Difficulty;
+}
+
+export interface ISaveData {
+  difficulty: Difficulty;
+  score: number;
+  timeLeft: number;
+  lives: number;
+  activeRecipe: IRecipe;
+  cauldronIngredients: IIngredient[];
+  shelfStock: ShelfStock;
+  status: 'playing' | 'paused';
 }

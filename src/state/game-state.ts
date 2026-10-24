@@ -1,19 +1,22 @@
-import { LEVEL_1_SETTINGS } from '../data/difficulty';
-import { getShelfIngredients } from '../data/ingredients';
+import { DEFAULT_DIFFICULTY, DIFFICULTY_SETTINGS } from '../data/difficulty';
+import { getShelfIngredients, INGREDIENTS } from '../data/ingredients';
 import { RECIPES } from '../data/recipes';
-import { createStock } from '../logic/stock';
 import { pickRecipe } from '../logic/recipe-generator';
+import { createStock } from '../logic/stock';
 import type {
   BrewResult,
+  Difficulty,
   GameOverReason,
   GameStatus,
   IIngredient,
   IRecipe,
   ShelfStock,
+  ISaveData,
 } from '../types';
 
 export interface IGameState {
   status: GameStatus;
+  difficulty: Difficulty;
   cauldronIngredients: IIngredient[];
   shelfStock: ShelfStock;
   activeRecipe: IRecipe;
@@ -27,12 +30,13 @@ export interface IGameState {
 
 type Listener = () => void;
 
-export function createMenuState(): IGameState {
+export function createMenuState(difficulty: Difficulty = DEFAULT_DIFFICULTY): IGameState {
   return {
     status: 'menu',
+    difficulty,
     cauldronIngredients: [],
     shelfStock: {},
-    activeRecipe: pickRecipe(RECIPES, LEVEL_1_SETTINGS.difficulty),
+    activeRecipe: pickRecipe(RECIPES, difficulty),
     score: 0,
     lives: 0,
     lastBrew: null,
@@ -42,14 +46,16 @@ export function createMenuState(): IGameState {
   };
 }
 
-export function createNewGameState(now: number = Date.now()): IGameState {
+export function createNewGameState(difficulty: Difficulty, now: number = Date.now()): IGameState {
+  const settings = DIFFICULTY_SETTINGS[difficulty];
+
   return {
-    ...createMenuState(),
+    ...createMenuState(difficulty),
     status: 'playing',
-    shelfStock: createStock(getShelfIngredients(LEVEL_1_SETTINGS.shelfSize)),
-    lives: LEVEL_1_SETTINGS.lives,
-    timeLeft: LEVEL_1_SETTINGS.startTimeMs,
-    endTime: now + LEVEL_1_SETTINGS.startTimeMs,
+    shelfStock: createStock(getShelfIngredients(settings.shelfSize)),
+    lives: settings.lives,
+    timeLeft: settings.startTimeMs,
+    endTime: now + settings.startTimeMs,
   };
 }
 
@@ -69,4 +75,33 @@ export function setState(next: IGameState): void {
 
 export function subscribe(listener: Listener): void {
   listeners.add(listener);
+}
+
+export function createRestoredState(save: ISaveData): IGameState | null {
+  const activeRecipe = RECIPES.find((recipe) => recipe.id === save.activeRecipe.id);
+  const cauldronIngredients: IIngredient[] = [];
+
+  for (const saved of save.cauldronIngredients) {
+    const ingredient = INGREDIENTS.find((item) => item.id === saved.id);
+
+    if (ingredient === undefined) {
+      return null;
+    }
+    cauldronIngredients.push(ingredient);
+  }
+
+  if (activeRecipe === undefined) {
+    return null;
+  }
+
+  return {
+    ...createMenuState(save.difficulty),
+    status: 'paused',
+    cauldronIngredients,
+    shelfStock: { ...save.shelfStock },
+    activeRecipe,
+    score: save.score,
+    lives: save.lives,
+    timeLeft: save.timeLeft,
+  };
 }

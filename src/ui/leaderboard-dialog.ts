@@ -1,13 +1,15 @@
+import { DIFFICULTIES, DIFFICULTY_SETTINGS } from '../data/difficulty';
 import { formatDate } from '../logic/leaderboard';
-import type { ILeaderboardEntry } from '../types';
+import type { Difficulty, ILeaderboardEntry } from '../types';
 import { el } from './dom';
 
 export interface ILeaderboardHandlers {
   onClearRequest: () => void;
+  onSelect: (difficulty: Difficulty) => void;
 }
 
 export interface ILeaderboardView {
-  show: (entries: readonly ILeaderboardEntry[]) => void;
+  show: (difficulty: Difficulty, entries: readonly ILeaderboardEntry[]) => void;
   hide: () => void;
 }
 
@@ -34,10 +36,22 @@ export function createLeaderboardDialog(
   const title = el('h2', 'dialog__title', 'Top Alchemists');
   title.id = 'leaderboard-title';
 
+  const tabs = el('div', 'tabs');
+  const tabButtons = new Map<Difficulty, HTMLButtonElement>();
+  for (const difficulty of DIFFICULTIES) {
+    const tab = el('button', 'tab', DIFFICULTY_SETTINGS[difficulty].label);
+    tab.type = 'button';
+    tab.addEventListener('click', () => {
+      handlers.onSelect(difficulty);
+    });
+    tabButtons.set(difficulty, tab);
+    tabs.append(tab);
+  }
+
   const empty = el('p', 'dialog__message', 'No results yet. Be the first!');
   const table = el('table', 'leaderboard');
   const head = el('thead');
-  head.append(createRow(['Rank', 'Name', 'Score', 'Date'], 'th'));
+  head.append(createRow(['Rank', 'Name', 'Score', 'Difficulty', 'Date'], 'th'));
   const body = el('tbody');
   table.append(head, body);
 
@@ -54,16 +68,30 @@ export function createLeaderboardDialog(
   });
   actions.append(clear, back);
 
-  box.append(title, empty, table, actions);
+  box.append(title, tabs, empty, table, actions);
   overlay.append(box);
   root.append(overlay);
 
   return {
-    show: (entries): void => {
+    show: (difficulty, entries): void => {
+      const wasHidden = overlay.hidden;
+
+      for (const [key, tab] of tabButtons) {
+        const selected = key === difficulty;
+        tab.classList.toggle('tab--selected', selected);
+        tab.setAttribute('aria-pressed', String(selected));
+      }
+
       body.replaceChildren(
         ...entries.map((entry, index) =>
           createRow(
-            [String(index + 1), entry.name, String(entry.score), formatDate(entry.timestamp)],
+            [
+              String(index + 1),
+              entry.name,
+              String(entry.score),
+              DIFFICULTY_SETTINGS[entry.difficulty].label,
+              formatDate(entry.timestamp),
+            ],
             'td',
           ),
         ),
@@ -72,7 +100,10 @@ export function createLeaderboardDialog(
       table.hidden = entries.length === 0;
       clear.disabled = entries.length === 0;
       overlay.hidden = false;
-      back.focus();
+
+      if (wasHidden) {
+        back.focus();
+      }
     },
     hide: (): void => {
       overlay.hidden = true;

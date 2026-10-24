@@ -1,4 +1,4 @@
-import { LEVEL_1_SETTINGS } from '../data/difficulty';
+import { DIFFICULTY_SETTINGS } from '../data/difficulty';
 import { INGREDIENTS } from '../data/ingredients';
 import { RECIPES } from '../data/recipes';
 import { addIngredient } from '../logic/add-ingredient';
@@ -7,6 +7,7 @@ import { calculateCauldron } from '../logic/calculate-cauldron';
 import { getGameOverReason } from '../logic/game-over';
 import { pickRecipe } from '../logic/recipe-generator';
 import { addTimeBonus, computeTimeLeft } from '../logic/timer';
+import type { Difficulty } from '../types';
 import {
   createMenuState,
   createNewGameState,
@@ -30,8 +31,18 @@ function applyOutcome(next: IGameState): IGameState {
   return { ...next, status: 'game-over', endTime: null, gameOverReason: reason };
 }
 
+export function selectDifficulty(difficulty: Difficulty): void {
+  const current = getState();
+
+  if (current.status !== 'menu') {
+    return;
+  }
+
+  setState({ ...current, difficulty, activeRecipe: pickRecipe(RECIPES, difficulty) });
+}
+
 export function startGame(): void {
-  setState(createNewGameState());
+  setState(createNewGameState(getState().difficulty));
 }
 
 export function addIngredientToCauldron(id: string): void {
@@ -51,7 +62,7 @@ export function addIngredientToCauldron(id: string): void {
     ingredient,
     current.cauldronIngredients,
     current.shelfStock,
-    LEVEL_1_SETTINGS.maxCauldronIngredients,
+    DIFFICULTY_SETTINGS[current.difficulty].maxCauldronIngredients,
   );
 
   if (!result) {
@@ -72,26 +83,26 @@ export function brew(): void {
     return;
   }
 
+  const settings = DIFFICULTY_SETTINGS[current.difficulty];
   const now = Date.now();
   const values = calculateCauldron(current.cauldronIngredients);
-  const success = isBrewSuccessful(values, current.activeRecipe, LEVEL_1_SETTINGS.tolerance);
-  const timeLeft = computeTimeLeft(current.endTime, now);
+  const success = isBrewSuccessful(values, current.activeRecipe, settings.tolerance);
 
   if (success) {
-    const nextTimeLeft = addTimeBonus(
-      timeLeft,
-      LEVEL_1_SETTINGS.timeBonusMs,
-      LEVEL_1_SETTINGS.startTimeMs,
+    const timeLeft = addTimeBonus(
+      computeTimeLeft(current.endTime, now),
+      settings.timeBonusMs,
+      settings.startTimeMs,
     );
     setState(
       applyOutcome({
         ...current,
         cauldronIngredients: [],
-        score: current.score + LEVEL_1_SETTINGS.scorePerBrew,
-        activeRecipe: pickRecipe(RECIPES, LEVEL_1_SETTINGS.difficulty),
+        score: current.score + settings.scorePerBrew,
+        activeRecipe: pickRecipe(RECIPES, current.difficulty),
         lastBrew: 'success',
-        timeLeft: nextTimeLeft,
-        endTime: now + nextTimeLeft,
+        timeLeft,
+        endTime: now + timeLeft,
       }),
     );
     return;
@@ -103,9 +114,26 @@ export function brew(): void {
       cauldronIngredients: [],
       lives: Math.max(0, current.lives - 1),
       lastBrew: 'failure',
-      timeLeft,
+      timeLeft: computeTimeLeft(current.endTime, now),
     }),
   );
+}
+
+export function tick(): void {
+  const current = getState();
+
+  if (current.status !== 'playing' || current.endTime === null) {
+    return;
+  }
+
+  const timeLeft = computeTimeLeft(current.endTime, Date.now());
+  const sameSecond = Math.ceil(timeLeft / 1000) === Math.ceil(current.timeLeft / 1000);
+
+  if (timeLeft > 0 && sameSecond) {
+    return;
+  }
+
+  setState(applyOutcome({ ...current, timeLeft }));
 }
 
 export function pauseGame(): void {
@@ -132,30 +160,17 @@ export function resumeGame(): void {
     return;
   }
 
-  setState({
-    ...current,
-    status: 'playing',
-    endTime: Date.now() + current.timeLeft,
-  });
+  setState({ ...current, status: 'playing', endTime: Date.now() + current.timeLeft });
 }
 
 export function exitToMenu(): void {
-  setState(createMenuState());
+  setState(createMenuState(getState().difficulty));
 }
 
-export function tick(): void {
-  const current = getState();
-
-  if (current.status !== 'playing' || current.endTime === null) {
+export function restoreGame(restored: IGameState): void {
+  if (getState().status !== 'menu') {
     return;
   }
 
-  const timeLeft = computeTimeLeft(current.endTime, Date.now());
-  const sameSecond = Math.ceil(timeLeft / 1000) === Math.ceil(current.timeLeft / 1000);
-
-  if (timeLeft > 0 && sameSecond) {
-    return;
-  }
-
-  setState(applyOutcome({ ...current, timeLeft }));
+  setState(restored);
 }

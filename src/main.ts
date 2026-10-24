@@ -1,5 +1,5 @@
 import './styles/style.scss';
-import { LEVEL_1_SETTINGS } from './data/difficulty';
+import { DIFFICULTY_SETTINGS } from './data/difficulty';
 import { getShelfIngredients } from './data/ingredients';
 import { isCauldronFull } from './logic/add-ingredient';
 import { calculateCauldron } from './logic/calculate-cauldron';
@@ -9,7 +9,9 @@ import {
   brew,
   exitToMenu,
   pauseGame,
+  restoreGame,
   resumeGame,
+  selectDifficulty,
   startGame,
   tick,
 } from './state/actions';
@@ -17,16 +19,19 @@ import { getState, subscribe } from './state/game-state';
 import { clearLeaderboard, loadLeaderboard, submitEntry } from './storage/leaderboard';
 import { createBars } from './ui/bars';
 import { createCauldron } from './ui/cauldron';
+import { createConfirmDialog } from './ui/confirm-dialog';
 import { createControls } from './ui/controls';
+import { createGameOver } from './ui/game-over';
+import { createHelpDialog } from './ui/help-dialog';
 import { createHud } from './ui/hud';
 import { createLayout } from './ui/layout';
+import { createLeaderboardDialog } from './ui/leaderboard-dialog';
+import { createPauseDialog } from './ui/pause-dialog';
 import { createRecipePanel } from './ui/recipe-panel';
 import { createShelf } from './ui/shelf';
-import { createPauseDialog } from './ui/pause-dialog';
-import { createGameOver } from './ui/game-over';
-import { createLeaderboardDialog } from './ui/leaderboard-dialog';
-import { createConfirmDialog } from './ui/confirm-dialog';
-import { createHelpDialog } from './ui/help-dialog';
+import { createSettingsDialog } from './ui/settings-dialog';
+import type { Difficulty } from './types';
+import { clearSave, loadGame, saveGame } from './storage/save';
 
 const root = document.querySelector<HTMLDivElement>('#app');
 
@@ -36,85 +41,127 @@ if (!root) {
 
 const layout = createLayout(root);
 const hud = createHud(layout.hud);
-const shelf = createShelf(
-  layout.shelf,
-  getShelfIngredients(LEVEL_1_SETTINGS.shelfSize),
-  addIngredientToCauldron,
-);
+const shelf = createShelf(layout.shelf, addIngredientToCauldron);
 const cauldron = createCauldron(layout.cauldron);
 const recipe = createRecipePanel(layout.recipe);
 const bars = createBars(layout.bars);
+
+let boardDifficulty: Difficulty = getState().difficulty;
+
 const confirmDialog = createConfirmDialog(root);
 const leaderboard = createLeaderboardDialog(root, {
+  onSelect: (difficulty) => {
+    openLeaderboard(difficulty);
+  },
   onClearRequest: () => {
-    confirmDialog.ask('Clear the whole leaderboard? This cannot be undone.', () => {
-      clearLeaderboard();
-      leaderboard.show([]);
+    const label = DIFFICULTY_SETTINGS[boardDifficulty].label;
+    confirmDialog.ask('Clear the ' + label + ' leaderboard? This cannot be undone.', () => {
+      clearLeaderboard(boardDifficulty);
+      openLeaderboard(boardDifficulty);
     });
   },
 });
 
-function openLeaderboard(): void {
-  leaderboard.show(loadLeaderboard());
+function openLeaderboard(difficulty: Difficulty = getState().difficulty): void {
+  boardDifficulty = difficulty;
+  leaderboard.show(difficulty, loadLeaderboard(difficulty));
 }
 
+const settingsDialog = createSettingsDialog(root, selectDifficulty);
 const help = createHelpDialog(root);
-
 const controls = createControls(layout.controls, {
   onBrew: brew,
   onStart: startGame,
   onPause: pauseGame,
   onLeaderboard: openLeaderboard,
   onHelp: help.show,
+  onSettings: settingsDialog.show,
+  onContinue: () => {
+    const restored = loadGame();
+
+    if (restored === null) {
+      render();
+      return;
+    }
+    restoreGame(restored);
+  },
 });
 const gameOver = createGameOver(root, {
   onPlayAgain: startGame,
   onSubmit: (name) => {
-    submitEntry(name, getState().score, Date.now());
+    const { difficulty, score } = getState();
+    submitEntry(difficulty, name, score, Date.now());
   },
   onShowLeaderboard: openLeaderboard,
 });
-const pauseDialog = createPauseDialog(root, { onResume: resumeGame, onExit: exitToMenu });
+const pauseDialog = createPauseDialog(root, {
+  onResume: resumeGame,
+  onExit: () => {
+    // Clear first: the menu render checks the save and must not see a stale one.
+    clearSave();
+    exitToMenu();
+  },
+});
+
+let renderedShelfSize = -1;
 
 function render(): void {
   const state = getState();
-  const max = LEVEL_1_SETTINGS.maxCauldronIngredients;
+  const settings = DIFFICULTY_SETTINGS[state.difficulty];
+  const max = settings.maxCauldronIngredients;
   const added = state.cauldronIngredients.length;
   const inMenu = state.status === 'menu';
   const paused = state.status === 'paused';
-  const blocked =
-    inMenu ||
-    paused ||
-    state.status === 'game-over' ||
-    isCauldronFull(state.cauldronIngredients, max);
+  const isOver = state.status === 'game-over';
+  const blocked = state.status !== 'playing' || isCauldronFull(state.cauldronIngredients, max);
+  const shelfSize = inMenu ? 0 : settings.shelfSize;
+
+  if (shelfSize !== renderedShelfSize) {
+    shelf.setIngredients(getShelfIngredients(shelfSize));
+    renderedShelfSize = shelfSize;
+  }
 
   layout.game.classList.toggle('game--paused', paused);
-  layout.game.inert = paused || state.status === 'game-over';
+  layout.game.inert = paused || isOver;
+  layout.shelf.classList.toggle('panel--idle', inMenu);
+  layout.recipe.classList.toggle('panel--idle', inMenu);
 
   hud.update({
     score: state.score,
     lives: state.lives,
     timeLeft: state.timeLeft,
-    startTime: LEVEL_1_SETTINGS.startTimeMs,
+    startTime: settings.startTimeMs,
+    difficultyLabel: settings.label,
   });
   shelf.update(state.shelfStock, blocked);
   cauldron.update(state.cauldronIngredients);
   recipe.update(state.activeRecipe, added, max);
   bars.update(calculateCauldron(state.cauldronIngredients), state.activeRecipe);
-  controls.update(state.status, added > 0 && !blocked, state.lastBrew);
-  const isOver = state.status === 'game-over';
-  const canSubmit = isOver && qualifiesForTop10(loadLeaderboard(), state.score);
+  controls.update(state.status, added > 0, state.lastBrew, inMenu && loadGame() !== null);
+  settingsDialog.update(state.difficulty);
+
+  const canSubmit = isOver && qualifiesForTop10(loadLeaderboard(state.difficulty), state.score);
   gameOver.update(isOver, state.score, state.gameOverReason, canSubmit);
   pauseDialog.update(paused);
 }
 
 subscribe(render);
+subscribe(() => {
+  const state = getState();
+
+  if (state.status === 'game-over') {
+    clearSave();
+  } else if (state.status !== 'menu') {
+    saveGame(state);
+  }
+});
 render();
+
+// Heartbeat only: remaining time is always computed from timestamps, not counted by ticks.
+window.setInterval(tick, 250);
 
 document.addEventListener('visibilitychange', () => {
   if (document.hidden) {
     pauseGame();
   }
 });
-
-window.setInterval(tick, 1000);

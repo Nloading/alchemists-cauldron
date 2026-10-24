@@ -8,19 +8,17 @@ interface ISlot {
 }
 
 export interface IShelfView {
+  setIngredients: (ingredients: readonly IIngredient[]) => void;
   update: (stock: Readonly<ShelfStock>, blocked: boolean) => void;
 }
 
-export function createShelf(
-  container: HTMLElement,
-  ingredients: readonly IIngredient[],
-  onAdd: (id: string) => void,
-): IShelfView {
+export function createShelf(container: HTMLElement, onAdd: (id: string) => void): IShelfView {
   const slots = new Map<string, ISlot>();
   const title = el('h2', 'panel__title', 'Ingredients');
   const list = el('ul', 'shelf');
+  container.replaceChildren(title, list);
 
-  for (const ingredient of ingredients) {
+  function createItem(ingredient: IIngredient): HTMLLIElement {
     const item = el('li', 'shelf__item');
     const button = el('button', 'slot');
     button.type = 'button';
@@ -42,13 +40,15 @@ export function createShelf(
     });
 
     item.append(button);
-    list.append(item);
     slots.set(ingredient.id, { button, badge });
+    return item;
   }
 
-  container.replaceChildren(title, list);
-
   return {
+    setIngredients: (ingredients): void => {
+      slots.clear();
+      list.replaceChildren(...ingredients.map((ingredient) => createItem(ingredient)));
+    },
     update: (stock, blocked): void => {
       for (const [id, slot] of slots) {
         const portionsLeft = stock[id] ?? 0;
