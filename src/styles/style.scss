@@ -643,3 +643,15 @@ body::before {
     }
   }
 }
+
+.dialog__box--left {
+  text-align: left;
+  justify-items: stretch;
+}
+
+.help__list {
+  display: grid;
+  gap: 0.5rem;
+  margin: 0;
+  padding-left: 1.25rem;
+}
