@@ -76,7 +76,7 @@ const controls = createControls(layout.controls, {
   onLeaderboard: openLeaderboard,
   onHelp: help.show,
   onSettings: settingsDialog.show,
-    onContinue: () => {
+  onContinue: () => {
     const restored = loadGame();
 
     if (restored === null) {

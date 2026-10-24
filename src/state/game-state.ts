@@ -11,7 +11,7 @@ import type {
   IIngredient,
   IRecipe,
   ShelfStock,
-  ISaveData
+  ISaveData,
 } from '../types';
 
 export interface IGameState {

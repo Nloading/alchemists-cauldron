@@ -30,8 +30,16 @@ export function isValidSave(data: unknown): data is ISaveData {
     return false;
   }
 
-  const { difficulty, score, timeLeft, lives, activeRecipe, cauldronIngredients, shelfStock, status } =
-    data;
+  const {
+    difficulty,
+    score,
+    timeLeft,
+    lives,
+    activeRecipe,
+    cauldronIngredients,
+    shelfStock,
+    status,
+  } = data;
 
   if (!isDifficulty(difficulty)) {
     return false;

@@ -17,7 +17,12 @@ export interface IControlsHandlers {
 }
 
 export interface IControlsView {
-  update: (status: GameStatus, canBrew: boolean, result: BrewResult | null, canContinue: boolean) => void;
+  update: (
+    status: GameStatus,
+    canBrew: boolean,
+    result: BrewResult | null,
+    canContinue: boolean,
+  ) => void;
 }
 
 export function createControls(
