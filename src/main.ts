@@ -26,6 +26,7 @@ import { createPauseDialog } from './ui/pause-dialog';
 import { createGameOver } from './ui/game-over';
 import { createLeaderboardDialog } from './ui/leaderboard-dialog';
 import { createConfirmDialog } from './ui/confirm-dialog';
+import { createHelpDialog } from './ui/help-dialog';
 
 const root = document.querySelector<HTMLDivElement>('#app');
 
@@ -57,11 +58,14 @@ function openLeaderboard(): void {
   leaderboard.show(loadLeaderboard());
 }
 
+const help = createHelpDialog(root);
+
 const controls = createControls(layout.controls, {
   onBrew: brew,
   onStart: startGame,
   onPause: pauseGame,
   onLeaderboard: openLeaderboard,
+  onHelp: help.show,
 });
 const gameOver = createGameOver(root, {
   onPlayAgain: startGame,
