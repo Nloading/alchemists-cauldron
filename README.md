@@ -32,7 +32,7 @@ Built with TypeScript, Vite and SCSS. No frameworks or game libraries.
 6. The game ends when time runs out, lives reach zero, or ingredients run out.
 7. If your score is in the Top-10, enter a name (2–15 characters: letters, digits, space, `_`, `-`).
 8. Use **Settings** on the start screen to choose a difficulty, and **Continue Game** to resume an unfinished game after a reload.
-Other controls: **Pause**, **Help**, **Leaderboard**.
+   Other controls: **Pause**, **Help**, **Leaderboard**.
 
 ## Run locally
 
