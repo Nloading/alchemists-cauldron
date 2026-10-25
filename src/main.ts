@@ -150,6 +150,7 @@ function render(): void {
   layout.game.inert = paused || isOver;
   layout.shelf.classList.toggle('panel--idle', inMenu);
   layout.recipe.classList.toggle('panel--idle', inMenu);
+  layout.bars.classList.toggle('panel--idle', inMenu);
 
   hud.update({
     score: state.score,
