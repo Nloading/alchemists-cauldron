@@ -50,3 +50,5 @@ export const DIFFICULTY_SETTINGS: Readonly<Record<Difficulty, IDifficultySetting
     reactionCount: 3,
   },
 };
+
+export const POUR_OUT_COST_MS = 10_000;
