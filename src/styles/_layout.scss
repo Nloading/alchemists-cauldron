@@ -1,0 +1,161 @@
+@use 'tokens' as *;
+
+.game {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.25fr) minmax(0, 1fr);
+  grid-template-areas:
+    'title title title'
+    'hud hud hud'
+    'shelf cauldron recipe'
+    'bars bars bars'
+    'controls controls controls';
+  gap: 1rem;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 1rem 1rem 2rem;
+  transition: filter 0.2s ease;
+}
+
+.game--paused {
+  filter: blur(8px) brightness(0.6);
+  user-select: none;
+  pointer-events: none;
+}
+
+.game__title {
+  grid-area: title;
+  margin: 0.25rem 0 0;
+  text-align: center;
+  font-family: $font-display;
+  font-size: clamp(1.8rem, 4vw, 2.8rem);
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  background: linear-gradient(180deg, #fff2c4, $gold 55%, #9a6a1e);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  filter: drop-shadow(0 0 14px rgb(141 255 107 / 35%));
+}
+
+.panel {
+  position: relative;
+  min-width: 0;
+  padding: 1.1rem 1.25rem;
+  border: 1px solid $line;
+  border-radius: 16px;
+  background: linear-gradient(160deg, rgb(38 28 58 / 70%), rgb(18 13 29 / 78%));
+  backdrop-filter: blur(8px);
+  box-shadow:
+    0 10px 30px rgb(0 0 0 / 45%),
+    inset 0 1px 0 rgb(255 255 255 / 6%);
+}
+
+.panel__title {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin: 0 0 0.9rem;
+  font-family: $font-display;
+  font-size: 1.05rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: $gold-soft;
+
+  &::before {
+    content: '✦';
+    color: $gold;
+    font-size: 0.8em;
+  }
+
+  &::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: linear-gradient(90deg, $line, transparent);
+  }
+}
+
+.panel--hud {
+  grid-area: hud;
+}
+
+.panel--shelf {
+  grid-area: shelf;
+  // Above its siblings so tooltips are never painted under the next panel.
+  z-index: 3;
+}
+
+.panel--cauldron {
+  grid-area: cauldron;
+  transition:
+    border-color 0.15s ease,
+    box-shadow 0.15s ease;
+}
+
+.panel--recipe {
+  grid-area: recipe;
+  align-self: start;
+}
+
+.panel--bars {
+  grid-area: bars;
+}
+
+.panel--controls {
+  grid-area: controls;
+}
+
+.panel--drop-active {
+  border-color: $green;
+  box-shadow:
+    0 0 24px 2px rgb(141 255 107 / 45%),
+    inset 0 0 20px rgb(141 255 107 / 12%);
+}
+
+.panel--shelf.panel--idle {
+  .shelf {
+    visibility: hidden;
+  }
+
+  &::after {
+    content: 'The shelf is empty. Press Start Game to stock it.';
+    display: block;
+    padding: 2rem 0.5rem;
+    color: $muted;
+    font-style: italic;
+    text-align: center;
+  }
+}
+
+@media (max-width: 1000px) {
+  .game {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    grid-template-areas:
+      'title title'
+      'hud hud'
+      'shelf cauldron'
+      'shelf recipe'
+      'bars bars'
+      'controls controls';
+  }
+}
+
+@media (max-width: 720px) {
+  .game {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-areas:
+      'title'
+      'hud'
+      'recipe'
+      'shelf'
+      'cauldron'
+      'bars'
+      'controls';
+    padding: 0.5rem 0.5rem 1.5rem;
+  }
+
+  .panel {
+    padding: 0.9rem;
+  }
+}
