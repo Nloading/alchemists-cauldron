@@ -2,7 +2,8 @@ import './styles/style.scss';
 import { DIFFICULTY_SETTINGS } from './data/difficulty';
 import { getShelfIngredients } from './data/ingredients';
 import { isCauldronFull } from './logic/add-ingredient';
-import { calculateCauldron } from './logic/calculate-cauldron';
+import { REACTIONS } from './data/reactions';
+import { calculateWithReactions, getActiveReactions } from './logic/reactions';
 import { qualifiesForTop10 } from './logic/leaderboard';
 import {
   addIngredientToCauldron,
@@ -134,9 +135,14 @@ function render(): void {
     difficultyLabel: settings.label,
   });
   shelf.update(state.shelfStock, blocked);
-  cauldron.update(state.cauldronIngredients);
+    const reactionName = REACTIONS.find((item) => item.id === state.lastReactionId)?.name ?? null;
+  const values = calculateWithReactions(
+    state.cauldronIngredients,
+    getActiveReactions(state.difficulty),
+  );
+  cauldron.update(state.cauldronIngredients, reactionName);
+  bars.update(values, state.activeRecipe);
   recipe.update(state.activeRecipe, added, max);
-  bars.update(calculateCauldron(state.cauldronIngredients), state.activeRecipe);
   controls.update(state.status, added > 0, state.lastBrew, inMenu && loadGame() !== null);
   settingsDialog.update(state.difficulty);
 
