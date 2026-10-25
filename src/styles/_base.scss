@@ -1,0 +1,43 @@
+@use 'tokens' as *;
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+[hidden] {
+  display: none !important;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  background-color: $bg;
+  color: $text;
+  font-family: $font-body;
+  line-height: 1.4;
+}
+
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  background:
+    linear-gradient(rgb(10 6 18 / 30%), rgb(10 6 18 / 45%)),
+    url('../assets/backgrounds/alchemy-room.svg') center / cover no-repeat;
+}
+
+button {
+  font: inherit;
+}
+
+.help__subtitle {
+  margin: 0.5rem 0 0;
+  font-family: $font-display;
+  font-size: 1.1rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: $gold-soft;
+}
