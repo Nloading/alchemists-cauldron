@@ -76,7 +76,7 @@ export function createControls(
   const pourOut = el('button', 'pause', 'Pour Out (−' + String(POUR_OUT_COST_MS / 1000) + ' s)');
   pourOut.type = 'button';
   pourOut.addEventListener('click', () => {
-  handlers.onPourOut();
+    handlers.onPourOut();
   });
 
   const row = el('div', 'controls__row');
