@@ -34,6 +34,7 @@ import { createShelf } from './ui/shelf';
 import { createSettingsDialog } from './ui/settings-dialog';
 import type { Difficulty } from './types';
 import { clearSave, loadGame, saveGame } from './storage/save';
+import { createDropZone } from './ui/drop-zone';
 
 const root = document.querySelector<HTMLDivElement>('#app');
 
@@ -45,6 +46,15 @@ const layout = createLayout(root);
 const hud = createHud(layout.hud);
 const shelf = createShelf(layout.shelf, addIngredientToCauldron);
 const cauldron = createCauldron(layout.cauldron);
+createDropZone(layout.cauldron, {
+  canDrop: () => {
+    const state = getState();
+    const max = DIFFICULTY_SETTINGS[state.difficulty].maxCauldronIngredients;
+
+    return state.status === 'playing' && !isCauldronFull(state.cauldronIngredients, max);
+  },
+  onDrop: addIngredientToCauldron,
+});
 const recipe = createRecipePanel(layout.recipe);
 const bars = createBars(layout.bars);
 

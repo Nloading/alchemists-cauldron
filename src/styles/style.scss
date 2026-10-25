@@ -800,3 +800,26 @@ body::before {
     bottom: calc(100% + 0.25rem);
   }
 }
+
+.shelf__item[draggable='true'] .slot {
+  cursor: grab;
+}
+
+.shelf__item--dragging {
+  opacity: 0.5;
+}
+
+.shelf__item--dragging .tooltip {
+  display: none;
+}
+
+.panel--cauldron {
+  transition:
+    border-color 0.15s ease,
+    box-shadow 0.15s ease;
+}
+
+.panel--drop-active {
+  border-color: #8dff6b;
+  box-shadow: 0 0 18px 2px rgb(141 255 107 / 45%);
+}
