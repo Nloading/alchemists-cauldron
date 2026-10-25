@@ -1,6 +1,7 @@
 import type { IIngredient, ShelfStock } from '../types';
 import { el } from './dom';
 import { formatSigned } from './format';
+import { INGREDIENT_MIME } from './drop-zone';
 
 interface ISlot {
   item: HTMLElement;
@@ -72,6 +73,19 @@ export function createShelf(container: HTMLElement, onAdd: (id: string) => void)
     item.addEventListener('focusin', () => {
       placeTooltip(tooltip);
     });
+    item.addEventListener('dragstart', (event) => {
+      if (button.disabled || event.dataTransfer === null) {
+        event.preventDefault();
+        return;
+      }
+
+      event.dataTransfer.setData(INGREDIENT_MIME, ingredient.id);
+      event.dataTransfer.effectAllowed = 'copy';
+      item.classList.add('shelf__item--dragging');
+    });
+    item.addEventListener('dragend', () => {
+      item.classList.remove('shelf__item--dragging');
+    });
 
     item.append(button, tooltip);
     slots.set(ingredient.id, { item, button, badge });
@@ -84,9 +98,6 @@ export function createShelf(container: HTMLElement, onAdd: (id: string) => void)
       list.replaceChildren(...ingredients.map((ingredient) => createItem(ingredient)));
     },
     update: (stock, blocked): void => {
-      for (const slot of slots.values()) {
-        slot.item.classList.toggle('shelf__item--empty', false);
-      }
       for (const [id, slot] of slots) {
         const portionsLeft = stock[id] ?? 0;
         const isEmpty = portionsLeft === 0;
@@ -94,6 +105,7 @@ export function createShelf(container: HTMLElement, onAdd: (id: string) => void)
         slot.button.disabled = isEmpty || blocked;
         slot.button.classList.toggle('slot--empty', isEmpty);
         slot.item.classList.toggle('shelf__item--empty', isEmpty);
+        slot.item.draggable = !isEmpty && !blocked;
       }
     },
   };
