@@ -728,3 +728,10 @@ body::before {
 .leaderboard td {
   overflow-wrap: anywhere;
 }
+
+.cauldron__reaction {
+  min-height: 1.5em;
+  margin: 0.75rem 0 0;
+  color: #ffd166;
+  font-weight: 700;
+}
