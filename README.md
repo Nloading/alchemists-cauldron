@@ -76,23 +76,23 @@ Use **Continue Game** on the start screen to resume an unfinished game after a r
 
 ### Reactions
 
-| Difficulty | Reaction     | Trigger                               | Effect                                                 |
-| ---------- | ------------ | ------------------------------------- | ------------------------------------------------------ |
-| Medium     | Bubbling     | Fairy Dust + Caustic Acid             | Magic Power +50%, remove 10 seconds once               |
-| Medium     | Solar Frost  | Dragon Tears + Frost Lotus            | Temperature set to 0, Density +20%                     |
-| Hard       | Volatile Mix | Phoenix Feather + Essence of the Void | Lose 1 life and clear the cauldron                     |
-| Hard       | Rooted Steam | Mandrake Root + Toad Slime            | Density +25%, Magic Power -10%                         |
-| Hard       | Ashen Bloom  | Phoenix Feather + Fairy Dust          | Temperature +10, Magic Power +25%                      |
+| Difficulty | Reaction     | Trigger                               | Effect                                   |
+| ---------- | ------------ | ------------------------------------- | ---------------------------------------- |
+| Medium     | Bubbling     | Fairy Dust + Caustic Acid             | Magic Power +50%, remove 10 seconds once |
+| Medium     | Solar Frost  | Dragon Tears + Frost Lotus            | Temperature set to 0, Density +20%       |
+| Hard       | Volatile Mix | Phoenix Feather + Essence of the Void | Lose 1 life and clear the cauldron       |
+| Hard       | Rooted Steam | Mandrake Root + Toad Slime            | Density +25%, Magic Power -10%           |
+| Hard       | Ashen Bloom  | Phoenix Feather + Fairy Dust          | Temperature +10, Magic Power +25%        |
 
 ### Keyboard shortcuts
 
 Shortcuts work only while a game is running. On the start screen and the Game Over screen the keyboard keeps its normal behavior, and shortcuts are ignored while typing in a text field.
 
-| Key          | Action                                                    |
-| ------------ | --------------------------------------------------------- |
-| `1` – `8`    | Add the ingredient at that shelf position                 |
-| `B`          | Brew                                                      |
-| `O`          | Pour Out                                                  |
+| Key          | Action                                                           |
+| ------------ | ---------------------------------------------------------------- |
+| `1` – `8`    | Add the ingredient at that shelf position                        |
+| `B`          | Brew                                                             |
+| `O`          | Pour Out                                                         |
 | `P` or `Esc` | Pause, and resume when paused (the only key on the pause screen) |
 
 Shortcuts use physical key positions, so they work with any keyboard layout. `Enter` and `Space` operate focused buttons as usual.
