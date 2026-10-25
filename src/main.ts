@@ -135,7 +135,7 @@ function render(): void {
     difficultyLabel: settings.label,
   });
   shelf.update(state.shelfStock, blocked);
-    const reactionName = REACTIONS.find((item) => item.id === state.lastReactionId)?.name ?? null;
+  const reactionName = REACTIONS.find((item) => item.id === state.lastReactionId)?.name ?? null;
   const values = calculateWithReactions(
     state.cauldronIngredients,
     getActiveReactions(state.difficulty),
