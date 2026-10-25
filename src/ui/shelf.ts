@@ -3,6 +3,7 @@ import { el } from './dom';
 import { formatSigned } from './format';
 
 interface ISlot {
+  item: HTMLElement;
   button: HTMLButtonElement;
   badge: HTMLElement;
 }
@@ -10,6 +11,36 @@ interface ISlot {
 export interface IShelfView {
   setIngredients: (ingredients: readonly IIngredient[]) => void;
   update: (stock: Readonly<ShelfStock>, blocked: boolean) => void;
+}
+
+function createTooltipRow(label: string, value: number): HTMLElement {
+  const row = el('div', 'tooltip__row');
+  const modifier = value > 0 ? 'positive' : value < 0 ? 'negative' : 'neutral';
+  row.append(
+    el('span', undefined, label),
+    el('span', 'tooltip__value tooltip__value--' + modifier, formatSigned(value)),
+  );
+  return row;
+}
+
+function createTooltip(ingredient: IIngredient): HTMLElement {
+  const tooltip = el('div', 'tooltip');
+  tooltip.id = 'tip-' + ingredient.id;
+  tooltip.setAttribute('role', 'tooltip');
+  tooltip.append(
+    el('strong', 'tooltip__title', ingredient.name),
+    createTooltipRow('Temperature', ingredient.temperature),
+    createTooltipRow('Density', ingredient.density),
+    createTooltipRow('Magic Power', ingredient.magicPower),
+  );
+  return tooltip;
+}
+
+function placeTooltip(tooltip: HTMLElement): void {
+  tooltip.classList.remove('tooltip--left', 'tooltip--up');
+  const rect = tooltip.getBoundingClientRect();
+  tooltip.classList.toggle('tooltip--left', rect.right > window.innerWidth);
+  tooltip.classList.toggle('tooltip--up', rect.bottom > window.innerHeight);
 }
 
 export function createShelf(container: HTMLElement, onAdd: (id: string) => void): IShelfView {
@@ -24,23 +55,26 @@ export function createShelf(container: HTMLElement, onAdd: (id: string) => void)
     button.type = 'button';
     button.setAttribute('aria-label', 'Add ' + ingredient.name);
 
+    const tooltip = createTooltip(ingredient);
+    button.setAttribute('aria-describedby', tooltip.id);
+
     const icon = el('span', 'icon icon--' + ingredient.icon);
     const name = el('span', 'slot__name', ingredient.name);
-    const stats = el('span', 'slot__stats');
-    stats.append(
-      el('span', 'stat stat--temp', 'T ' + formatSigned(ingredient.temperature)),
-      el('span', 'stat stat--density', 'D ' + formatSigned(ingredient.density)),
-      el('span', 'stat stat--magic', 'MP ' + formatSigned(ingredient.magicPower)),
-    );
     const badge = el('span', 'slot__badge');
 
-    button.append(icon, name, stats, badge);
+    button.append(icon, name, badge);
     button.addEventListener('click', () => {
       onAdd(ingredient.id);
     });
+    item.addEventListener('mouseenter', () => {
+      placeTooltip(tooltip);
+    });
+    item.addEventListener('focusin', () => {
+      placeTooltip(tooltip);
+    });
 
-    item.append(button);
-    slots.set(ingredient.id, { button, badge });
+    item.append(button, tooltip);
+    slots.set(ingredient.id, { item, button, badge });
     return item;
   }
 
@@ -50,12 +84,16 @@ export function createShelf(container: HTMLElement, onAdd: (id: string) => void)
       list.replaceChildren(...ingredients.map((ingredient) => createItem(ingredient)));
     },
     update: (stock, blocked): void => {
+      for (const slot of slots.values()) {
+        slot.item.classList.toggle('shelf__item--empty', false);
+      }
       for (const [id, slot] of slots) {
         const portionsLeft = stock[id] ?? 0;
         const isEmpty = portionsLeft === 0;
         slot.badge.textContent = String(portionsLeft);
         slot.button.disabled = isEmpty || blocked;
         slot.button.classList.toggle('slot--empty', isEmpty);
+        slot.item.classList.toggle('shelf__item--empty', isEmpty);
       }
     },
   };
