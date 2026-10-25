@@ -1,5 +1,6 @@
 import type { BrewResult, GameStatus } from '../types';
 import { el } from './dom';
+import { POUR_OUT_COST_MS } from '../data/difficulty';
 
 const MESSAGES: Record<BrewResult, string> = {
   success: 'Perfect potion! Well brewed.',
@@ -14,6 +15,7 @@ export interface IControlsHandlers {
   onHelp: () => void;
   onSettings: () => void;
   onContinue: () => void;
+  onPourOut: () => void;
 }
 
 export interface IControlsView {
@@ -71,8 +73,14 @@ export function createControls(
     handlers.onPause();
   });
 
+  const pourOut = el('button', 'pause', 'Pour Out (−' + String(POUR_OUT_COST_MS / 1000) + ' s)');
+  pourOut.type = 'button';
+  pourOut.addEventListener('click', () => {
+    handlers.onPourOut();
+  });
+
   const row = el('div', 'controls__row');
-  row.append(brewButton, pause);
+  row.append(brewButton, pourOut, pause);
 
   const message = el('p', 'brew-message');
   message.setAttribute('role', 'status');
@@ -90,6 +98,8 @@ export function createControls(
       continueButton.hidden = !inMenu || !canContinue;
       row.hidden = inMenu;
       pause.hidden = !playing;
+      pourOut.hidden = !playing;
+      pourOut.disabled = !canBrew;
       brewButton.disabled = !canBrew || !playing;
       message.textContent = result === null || inMenu ? '' : MESSAGES[result];
       message.classList.toggle('brew-message--success', result === 'success');

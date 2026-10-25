@@ -14,6 +14,10 @@ const RULES: readonly string[] = [
   'Every ingredient has limited stock. Used ingredients are spent, even after a failed brew.',
   'The game ends when time runs out, you lose all lives, or the ingredients run out.',
   'Your game is saved automatically. Use Continue Game on the start screen after a reload.',
+  'Drag an ingredient card into the cauldron, or click it. Hover a card to see its Temperature, Density and Magic Power.',
+  'Some ingredient pairs react on Medium and Hard (for example Fairy Dust + Caustic Acid). A reaction changes the values and can cost time or a life.',
+  'Pour Out clears the cauldron for 10 seconds and no life. The ingredients are not returned.',
+  'Keyboard: 1–8 add the ingredient at that shelf position, B brews, O pours out, P or Esc pauses and resumes.',
 ];
 
 export function createHelpDialog(root: HTMLElement): IHelpView {

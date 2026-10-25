@@ -1,0 +1,95 @@
+@use 'tokens' as *;
+
+.panel--hud {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.75rem 1.25rem;
+}
+
+.hud__score {
+  font-family: $font-display;
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: $gold-soft;
+}
+
+.hud__difficulty {
+  padding: 0.2rem 0.8rem;
+  border: 1px solid $line;
+  border-radius: 999px;
+  background: rgb(0 0 0 / 30%);
+  color: $muted;
+  font-size: 0.8rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.hud__time-box {
+  display: grid;
+  gap: 0.35rem;
+  min-width: 11rem;
+  text-align: center;
+}
+
+.hud__time {
+  font-family: $font-display;
+  font-size: 1.3rem;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  color: $green;
+  text-shadow: 0 0 12px rgb(141 255 107 / 45%);
+}
+
+.hud__time--critical {
+  color: $danger;
+  text-shadow: 0 0 12px rgb(255 107 107 / 60%);
+  animation: pulse 0.8s ease-in-out infinite;
+}
+
+.hud__time-track {
+  height: 0.5rem;
+  overflow: hidden;
+  border-radius: 999px;
+  background: #120e1b;
+  box-shadow: inset 0 1px 3px rgb(0 0 0 / 70%);
+}
+
+.hud__time-fill {
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, #4fd12e, $green);
+  box-shadow: 0 0 10px rgb(141 255 107 / 60%);
+  transition: width 0.25s linear;
+}
+
+.hud__time-fill--critical {
+  background: linear-gradient(90deg, #d93a3a, $danger);
+  box-shadow: 0 0 10px rgb(255 107 107 / 60%);
+}
+
+.hud__lives {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.25rem;
+  min-width: 5rem;
+}
+
+.heart {
+  color: #ff4d6d;
+  font-size: 1.5rem;
+  filter: drop-shadow(0 0 6px rgb(255 77 109 / 70%));
+}
+
+@media (max-width: 720px) {
+  .panel--hud {
+    flex-wrap: wrap;
+  }
+
+  .hud__time-box {
+    order: 1;
+    flex-basis: 100%;
+  }
+}

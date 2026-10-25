@@ -2,13 +2,15 @@ import './styles/style.scss';
 import { DIFFICULTY_SETTINGS } from './data/difficulty';
 import { getShelfIngredients } from './data/ingredients';
 import { isCauldronFull } from './logic/add-ingredient';
-import { calculateCauldron } from './logic/calculate-cauldron';
+import { REACTIONS } from './data/reactions';
+import { calculateWithReactions, getActiveReactions } from './logic/reactions';
 import { qualifiesForTop10 } from './logic/leaderboard';
 import {
   addIngredientToCauldron,
   brew,
   exitToMenu,
   pauseGame,
+  pourOut,
   restoreGame,
   resumeGame,
   selectDifficulty,
@@ -32,6 +34,10 @@ import { createShelf } from './ui/shelf';
 import { createSettingsDialog } from './ui/settings-dialog';
 import type { Difficulty } from './types';
 import { clearSave, loadGame, saveGame } from './storage/save';
+import { createDropZone } from './ui/drop-zone';
+import type { BrewResult } from './types';
+import { createEffects } from './ui/effects';
+import { attachKeyboard } from './ui/keyboard';
 
 const root = document.querySelector<HTMLDivElement>('#app');
 
@@ -43,6 +49,17 @@ const layout = createLayout(root);
 const hud = createHud(layout.hud);
 const shelf = createShelf(layout.shelf, addIngredientToCauldron);
 const cauldron = createCauldron(layout.cauldron);
+const effects = createEffects(layout.game, layout.cauldron);
+let shownBrew: BrewResult | null = null;
+createDropZone(layout.cauldron, {
+  canDrop: () => {
+    const state = getState();
+    const max = DIFFICULTY_SETTINGS[state.difficulty].maxCauldronIngredients;
+
+    return state.status === 'playing' && !isCauldronFull(state.cauldronIngredients, max);
+  },
+  onDrop: addIngredientToCauldron,
+});
 const recipe = createRecipePanel(layout.recipe);
 const bars = createBars(layout.bars);
 
@@ -76,6 +93,7 @@ const controls = createControls(layout.controls, {
   onLeaderboard: openLeaderboard,
   onHelp: help.show,
   onSettings: settingsDialog.show,
+  onPourOut: pourOut,
   onContinue: () => {
     const restored = loadGame();
 
@@ -108,6 +126,13 @@ let renderedShelfSize = -1;
 function render(): void {
   const state = getState();
   const settings = DIFFICULTY_SETTINGS[state.difficulty];
+  if (state.lastBrew !== shownBrew) {
+    shownBrew = state.lastBrew;
+
+    if (state.lastBrew !== null) {
+      effects.play(state.lastBrew, '+' + String(settings.timeBonusMs / 1000) + ' s');
+    }
+  }
   const max = settings.maxCauldronIngredients;
   const added = state.cauldronIngredients.length;
   const inMenu = state.status === 'menu';
@@ -125,6 +150,7 @@ function render(): void {
   layout.game.inert = paused || isOver;
   layout.shelf.classList.toggle('panel--idle', inMenu);
   layout.recipe.classList.toggle('panel--idle', inMenu);
+  layout.bars.classList.toggle('panel--idle', inMenu);
 
   hud.update({
     score: state.score,
@@ -134,9 +160,14 @@ function render(): void {
     difficultyLabel: settings.label,
   });
   shelf.update(state.shelfStock, blocked);
-  cauldron.update(state.cauldronIngredients);
+  const reactionName = REACTIONS.find((item) => item.id === state.lastReactionId)?.name ?? null;
+  const values = calculateWithReactions(
+    state.cauldronIngredients,
+    getActiveReactions(state.difficulty),
+  );
+  cauldron.update(state.cauldronIngredients, reactionName);
+  bars.update(values, state.activeRecipe);
   recipe.update(state.activeRecipe, added, max);
-  bars.update(calculateCauldron(state.cauldronIngredients), state.activeRecipe);
   controls.update(state.status, added > 0, state.lastBrew, inMenu && loadGame() !== null);
   settingsDialog.update(state.difficulty);
 
@@ -164,4 +195,35 @@ document.addEventListener('visibilitychange', () => {
   if (document.hidden) {
     pauseGame();
   }
+});
+
+attachKeyboard({
+  getStatus: () => getState().status,
+  getShelfSize: () => DIFFICULTY_SETTINGS[getState().difficulty].shelfSize,
+  onShortcut: (action) => {
+    switch (action.type) {
+      case 'add': {
+        const shelf = getShelfIngredients(DIFFICULTY_SETTINGS[getState().difficulty].shelfSize);
+        const ingredient = shelf[action.index];
+
+        if (ingredient) {
+          addIngredientToCauldron(ingredient.id);
+        }
+        break;
+      }
+      case 'brew':
+        brew();
+        break;
+      case 'pour-out':
+        pourOut();
+        break;
+      case 'toggle-pause':
+        if (getState().status === 'playing') {
+          pauseGame();
+        } else {
+          resumeGame();
+        }
+        break;
+    }
+  },
 });

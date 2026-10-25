@@ -1,0 +1,148 @@
+@keyframes pulse {
+  50% {
+    opacity: 0.45;
+    transform: scale(1.08);
+  }
+}
+
+@keyframes float {
+  from {
+    transform: translateY(0) rotate(-6deg);
+  }
+
+  to {
+    transform: translateY(-2.5rem) rotate(6deg);
+  }
+}
+
+@keyframes bubble {
+  0% {
+    opacity: 0;
+    transform: translateY(4px) scale(0.5);
+  }
+
+  40% {
+    opacity: 0.9;
+  }
+
+  100% {
+    opacity: 0;
+    transform: translateY(-12px) scale(1.15);
+  }
+}
+
+@keyframes liquid-glow {
+  from {
+    filter: brightness(0.95);
+  }
+
+  to {
+    filter: brightness(1.3);
+  }
+}
+
+@keyframes flicker {
+  from {
+    opacity: 0.7;
+    transform: scaleX(0.96);
+  }
+
+  to {
+    opacity: 1;
+    transform: scaleX(1.04);
+  }
+}
+
+@keyframes rune-glow {
+  from {
+    opacity: 0.45;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes burst-success {
+  from {
+    opacity: 0.9;
+    transform: scale(0.2);
+  }
+
+  to {
+    opacity: 0;
+    transform: scale(6);
+  }
+}
+
+@keyframes burst-failure {
+  from {
+    opacity: 1;
+    transform: scale(0.2);
+  }
+
+  60% {
+    opacity: 0.9;
+  }
+
+  to {
+    opacity: 0;
+    transform: scale(8);
+  }
+}
+
+@keyframes rise {
+  from {
+    opacity: 1;
+    transform: translate(-50%, 0);
+  }
+
+  to {
+    opacity: 0;
+    transform: translate(-50%, -3rem);
+  }
+}
+
+@keyframes shake {
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+
+  15%,
+  55% {
+    transform: translateX(-10px);
+  }
+
+  35%,
+  75% {
+    transform: translateX(10px);
+  }
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+}
+
+@keyframes pop-in {
+  from {
+    opacity: 0;
+    transform: translateY(12px) scale(0.96);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .game--shake,
+  .cauldron__floater,
+  .cauldron-art__bubble,
+  .cauldron-art__liquid,
+  .cauldron-art__fire,
+  .cauldron-art__rune,
+  .hud__time--critical,
+  .dialog,
+  .dialog__box {
+    animation: none;
+  }
+}

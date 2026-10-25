@@ -1,0 +1,91 @@
+@use 'tokens' as *;
+
+.panel--recipe {
+  border-color: #8a6a2b;
+  background: linear-gradient(160deg, #ecdcb2, #cbb27c 60%, #b99d65);
+  color: #2b1d12;
+  box-shadow:
+    0 10px 30px rgb(0 0 0 / 50%),
+    inset 0 0 40px rgb(120 80 20 / 35%);
+
+  .panel__title {
+    color: #6b4a14;
+
+    &::before {
+      color: #8a6a2b;
+    }
+
+    &::after {
+      background: linear-gradient(90deg, #8a6a2b, transparent);
+    }
+  }
+}
+
+.panel--recipe.panel--idle {
+  .recipe__name,
+  .recipe__counter,
+  .recipe__ranges {
+    visibility: hidden;
+  }
+
+  &::after {
+    content: 'Your recipe appears here when the game starts.';
+    display: block;
+    padding: 1.5rem 0.5rem;
+    color: #6b5636;
+    font-style: italic;
+    text-align: center;
+  }
+}
+
+.recipe__name {
+  margin: 0 0 0.25rem;
+  font-family: $font-display;
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #2b1d12;
+}
+
+.recipe__counter {
+  margin: 0 0 1rem;
+  color: #6b5636;
+  font-weight: 600;
+}
+
+.recipe__counter--full {
+  color: #9a4a00;
+  font-weight: 700;
+}
+
+.recipe__ranges {
+  display: grid;
+  gap: 0.5rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.recipe__range {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  padding-bottom: 0.3rem;
+  border-bottom: 1px dashed rgb(90 60 20 / 40%);
+}
+
+.recipe__range-value {
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+.recipe__range:nth-child(1) .recipe__range-value {
+  color: #a02a1a;
+}
+
+.recipe__range:nth-child(2) .recipe__range-value {
+  color: #1f5a9a;
+}
+
+.recipe__range:nth-child(3) .recipe__range-value {
+  color: #6a2aa0;
+}
