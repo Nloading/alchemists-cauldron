@@ -1,0 +1,151 @@
+@use 'tokens' as *;
+
+.panel--bars {
+  display: grid;
+  gap: 1.1rem;
+}
+
+.panel--bars.panel--idle {
+  .bar {
+    opacity: 0.55;
+  }
+
+  .bar__zone,
+  .bar__target {
+    visibility: hidden;
+  }
+
+  .bar__track--in-range {
+    border-color: rgb(255 255 255 / 14%);
+    box-shadow: inset 0 2px 6px rgb(0 0 0 / 60%);
+  }
+}
+
+.bar__head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.5rem;
+  margin-bottom: 0.4rem;
+  font-size: 0.9rem;
+}
+
+.bar__label {
+  font-family: $font-display;
+  font-size: 0.85rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.bar__target {
+  color: $muted;
+}
+
+.bar__value {
+  min-width: 3.5ch;
+  color: $gold-soft;
+  font-size: 1.05rem;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  text-align: right;
+}
+
+.bar__track {
+  position: relative;
+  height: 1.6rem;
+  overflow: hidden;
+  border: 1px solid rgb(255 255 255 / 14%);
+  border-radius: 999px;
+  background: #120e1b;
+  box-shadow: inset 0 2px 6px rgb(0 0 0 / 60%);
+  transition:
+    box-shadow 0.3s ease,
+    border-color 0.3s ease;
+}
+
+.bar__track--temp {
+  background: linear-gradient(90deg, #1c3a7a, #15121f 50%, #7a2318);
+}
+
+.bar__track--density {
+  background: linear-gradient(90deg, #14183a, #15121f 50%, #1f4f8a);
+}
+
+.bar__track--magic {
+  background: linear-gradient(90deg, #2a1647, #15121f 50%, #5b2aa0);
+}
+
+.bar__zone {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  border-inline: 2px solid $green;
+  background: rgb(141 255 107 / 24%);
+  transition:
+    left 0.4s ease,
+    width 0.4s ease;
+}
+
+.bar__fill {
+  position: absolute;
+  top: 25%;
+  bottom: 25%;
+  border-radius: 4px;
+  background: #9b5de5;
+  transition:
+    left 0.4s ease,
+    width 0.4s ease;
+}
+
+.bar__track--temp .bar__fill {
+  background: #ff6a4d;
+  box-shadow: 0 0 10px rgb(255 106 77 / 60%);
+}
+
+.bar__track--density .bar__fill {
+  background: #4aa0ff;
+  box-shadow: 0 0 10px rgb(74 160 255 / 60%);
+}
+
+.bar__track--magic .bar__fill {
+  background: #b57cff;
+  box-shadow: 0 0 10px rgb(181 124 255 / 60%);
+}
+
+.bar__zero {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background: $text;
+  opacity: 0.5;
+  transform: translateX(-50%);
+}
+
+.bar__marker {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 4px;
+  border-radius: 2px;
+  background: #fff;
+  box-shadow: 0 0 10px #fff;
+  transform: translateX(-50%);
+  transition: left 0.4s ease;
+}
+
+.bar__track--in-range {
+  border-color: $green;
+  box-shadow:
+    0 0 14px 2px rgb(141 255 107 / 60%),
+    inset 0 2px 6px rgb(0 0 0 / 60%);
+}
+
+.bar__scale {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 0.2rem;
+  color: $muted;
+  font-size: 0.75rem;
+}
