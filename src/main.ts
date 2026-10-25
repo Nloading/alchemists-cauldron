@@ -10,6 +10,7 @@ import {
   brew,
   exitToMenu,
   pauseGame,
+  pourOut,
   restoreGame,
   resumeGame,
   selectDifficulty,
@@ -77,6 +78,7 @@ const controls = createControls(layout.controls, {
   onLeaderboard: openLeaderboard,
   onHelp: help.show,
   onSettings: settingsDialog.show,
+  onPourOut: pourOut,
   onContinue: () => {
     const restored = loadGame();
 
