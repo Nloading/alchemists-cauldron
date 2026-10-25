@@ -37,6 +37,7 @@ import { clearSave, loadGame, saveGame } from './storage/save';
 import { createDropZone } from './ui/drop-zone';
 import type { BrewResult } from './types';
 import { createEffects } from './ui/effects';
+import { attachKeyboard } from './ui/keyboard';
 
 const root = document.querySelector<HTMLDivElement>('#app');
 
@@ -193,4 +194,35 @@ document.addEventListener('visibilitychange', () => {
   if (document.hidden) {
     pauseGame();
   }
+});
+
+attachKeyboard({
+  getStatus: () => getState().status,
+  getShelfSize: () => DIFFICULTY_SETTINGS[getState().difficulty].shelfSize,
+  onShortcut: (action) => {
+    switch (action.type) {
+      case 'add': {
+        const shelf = getShelfIngredients(DIFFICULTY_SETTINGS[getState().difficulty].shelfSize);
+        const ingredient = shelf[action.index];
+
+        if (ingredient) {
+          addIngredientToCauldron(ingredient.id);
+        }
+        break;
+      }
+      case 'brew':
+        brew();
+        break;
+      case 'pour-out':
+        pourOut();
+        break;
+      case 'toggle-pause':
+        if (getState().status === 'playing') {
+          pauseGame();
+        } else {
+          resumeGame();
+        }
+        break;
+    }
+  },
 });
