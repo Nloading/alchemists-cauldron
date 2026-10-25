@@ -35,6 +35,8 @@ import { createSettingsDialog } from './ui/settings-dialog';
 import type { Difficulty } from './types';
 import { clearSave, loadGame, saveGame } from './storage/save';
 import { createDropZone } from './ui/drop-zone';
+import type { BrewResult } from './types';
+import { createEffects } from './ui/effects';
 
 const root = document.querySelector<HTMLDivElement>('#app');
 
@@ -46,6 +48,8 @@ const layout = createLayout(root);
 const hud = createHud(layout.hud);
 const shelf = createShelf(layout.shelf, addIngredientToCauldron);
 const cauldron = createCauldron(layout.cauldron);
+const effects = createEffects(layout.game, layout.cauldron);
+let shownBrew: BrewResult | null = null;
 createDropZone(layout.cauldron, {
   canDrop: () => {
     const state = getState();
@@ -121,6 +125,13 @@ let renderedShelfSize = -1;
 function render(): void {
   const state = getState();
   const settings = DIFFICULTY_SETTINGS[state.difficulty];
+  if (state.lastBrew !== shownBrew) {
+    shownBrew = state.lastBrew;
+
+    if (state.lastBrew !== null) {
+      effects.play(state.lastBrew, '+' + String(settings.timeBonusMs / 1000) + ' s');
+    }
+  }
   const max = settings.maxCauldronIngredients;
   const added = state.cauldronIngredients.length;
   const inMenu = state.status === 'menu';
