@@ -1,0 +1,172 @@
+@use 'tokens' as *;
+
+.cauldron__pot {
+  position: relative;
+  height: 15rem;
+  margin-bottom: 0.75rem;
+
+  &::before {
+    content: '';
+    position: absolute;
+    inset: auto 10% 0;
+    height: 60%;
+    background: radial-gradient(ellipse at 50% 100%, rgb(141 255 107 / 22%), transparent 70%);
+    filter: blur(8px);
+  }
+}
+
+.cauldron__art {
+  position: absolute;
+  inset: 0;
+
+  svg {
+    width: 100%;
+    height: 100%;
+  }
+}
+
+.cauldron__floaters {
+  position: absolute;
+  inset: 0;
+}
+
+.cauldron__floater {
+  position: absolute;
+  bottom: 52%;
+  left: calc(18% + var(--i, 0) * 14%);
+  animation: float 3s ease-in-out infinite alternate;
+  animation-delay: calc(var(--i, 0) * -0.7s);
+
+  .icon {
+    width: 2rem;
+    height: 2rem;
+  }
+}
+
+.cauldron-art__bubble {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: bubble 2.6s ease-in-out infinite;
+  animation-delay: var(--d, 0s);
+}
+
+.cauldron-art__liquid {
+  animation: liquid-glow 3s ease-in-out infinite alternate;
+}
+
+.cauldron-art__fire {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: flicker 1.4s ease-in-out infinite alternate;
+}
+
+.cauldron-art__rune {
+  animation: rune-glow 2.4s ease-in-out infinite alternate;
+}
+
+.game--paused {
+  .cauldron__floater,
+  .cauldron-art__bubble,
+  .cauldron-art__liquid,
+  .cauldron-art__fire,
+  .cauldron-art__rune {
+    animation-play-state: paused;
+  }
+}
+
+.cauldron__empty {
+  margin: 0;
+  color: $muted;
+  font-style: italic;
+  text-align: center;
+}
+
+.cauldron__list {
+  display: grid;
+  gap: 0.4rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.cauldron__item {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.4rem 0.75rem;
+  border: 1px solid rgb(255 255 255 / 8%);
+  border-radius: 10px;
+  background: rgb(255 255 255 / 5%);
+
+  .icon {
+    width: 1.8rem;
+    height: 1.8rem;
+    margin-top: 0.35rem;
+
+    &::before {
+      top: -0.42rem;
+      width: 0.65rem;
+      height: 0.5rem;
+    }
+  }
+}
+
+.cauldron__reaction {
+  min-height: 1.5em;
+  margin: 0.75rem 0 0;
+  color: $gold-soft;
+  font-weight: 700;
+  text-align: center;
+  text-shadow: 0 0 10px rgb(255 209 102 / 50%);
+}
+
+.fx {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  overflow: hidden;
+  border-radius: inherit;
+  pointer-events: none;
+}
+
+.fx__burst {
+  position: absolute;
+  top: 40%;
+  left: 50%;
+  width: 4rem;
+  height: 4rem;
+  margin: -2rem 0 0 -2rem;
+  border-radius: 50%;
+  opacity: 0;
+}
+
+.fx--success .fx__burst {
+  background: radial-gradient(circle, rgb(141 255 107 / 85%), transparent 70%);
+  animation: burst-success 1s ease-out;
+}
+
+.fx--failure .fx__burst {
+  background: radial-gradient(circle, #fff 0%, #ffd166 20%, #ff6b3d 45%, transparent 70%);
+  animation: burst-failure 0.7s ease-out;
+}
+
+.fx__bonus {
+  position: absolute;
+  top: 35%;
+  left: 50%;
+  color: $green;
+  font-family: $font-display;
+  font-size: 1.6rem;
+  font-weight: 700;
+  opacity: 0;
+  text-shadow: 0 0 12px rgb(141 255 107 / 70%);
+  transform: translateX(-50%);
+}
+
+.fx--success .fx__bonus {
+  animation: rise 1s ease-out;
+}
+
+.game--shake {
+  animation: shake 0.5s ease-in-out;
+}
