@@ -1,4 +1,4 @@
-import { DIFFICULTY_SETTINGS } from '../data/difficulty';
+import { DIFFICULTY_SETTINGS, POUR_OUT_COST_MS } from '../data/difficulty';
 import { INGREDIENTS } from '../data/ingredients';
 import { RECIPES } from '../data/recipes';
 import { addIngredient } from '../logic/add-ingredient';
@@ -203,4 +203,29 @@ export function restoreGame(restored: IGameState): void {
   }
 
   setState(restored);
+}
+
+export function pourOut(): void {
+  const current = getState();
+
+  if (
+    current.status !== 'playing' ||
+    current.endTime === null ||
+    current.cauldronIngredients.length === 0
+  ) {
+    return;
+  }
+
+  const now = Date.now();
+  const timeLeft = Math.max(0, computeTimeLeft(current.endTime, now) - POUR_OUT_COST_MS);
+
+  setState(
+    applyOutcome({
+      ...current,
+      cauldronIngredients: [],
+      timeLeft,
+      endTime: now + timeLeft,
+      lastReactionId: null,
+    }),
+  );
 }
