@@ -59,13 +59,15 @@ body::before {
   list-style: none;
 }
 
+.shelf__item {
+  position: relative;
+}
+
 .slot {
   position: relative;
   display: grid;
   grid-template-columns: auto 1fr auto;
-  grid-template-areas:
-    'icon name badge'
-    'icon stats badge';
+  grid-template-areas: 'icon name badge';
   align-items: center;
   gap: 0.15rem 0.75rem;
   width: 100%;
@@ -88,12 +90,6 @@ body::before {
 .slot__name {
   grid-area: name;
   font-weight: 600;
-}
-.slot__stats {
-  grid-area: stats;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.35rem;
 }
 .slot__badge {
   grid-area: badge;
@@ -123,21 +119,6 @@ body::before {
 
 .slot--empty .icon {
   visibility: hidden;
-}
-
-.stat {
-  padding: 0.05rem 0.4rem;
-  border-radius: 6px;
-  font-size: 0.8rem;
-}
-.stat--temp {
-  background: #5a2a2a;
-}
-.stat--density {
-  background: #1f3d5a;
-}
-.stat--magic {
-  background: #44286b;
 }
 
 .cauldron__item {
@@ -734,4 +715,88 @@ body::before {
   margin: 0.75rem 0 0;
   color: #ffd166;
   font-weight: 700;
+}
+
+.shelf__item {
+  position: relative;
+}
+
+.tooltip {
+  position: absolute;
+  top: 0;
+  left: calc(100% + 0.5rem);
+  z-index: 5;
+  display: grid;
+  gap: 0.3rem;
+  width: 13rem;
+  padding: 0.6rem 0.75rem;
+  border: 1px solid #8dff6b;
+  border-radius: 10px;
+  background: #120e1b;
+  box-shadow: 0 6px 18px rgb(0 0 0 / 50%);
+  font-size: 0.9rem;
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transition: opacity 0.15s ease;
+}
+
+.tooltip--left {
+  left: auto;
+  right: calc(100% + 0.5rem);
+}
+
+.tooltip--up {
+  top: auto;
+  bottom: 0;
+}
+
+.shelf__item:hover .tooltip,
+.shelf__item:focus-within .tooltip {
+  opacity: 1;
+  visibility: visible;
+}
+
+.shelf__item--empty .tooltip,
+.game--paused .tooltip,
+.game[inert] .tooltip {
+  display: none;
+}
+
+.tooltip__title {
+  color: #8dff6b;
+}
+
+.tooltip__row {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+
+.tooltip__value {
+  font-weight: 700;
+}
+
+.tooltip__value--positive {
+  color: #8dff6b;
+}
+
+.tooltip__value--negative {
+  color: #ff6b6b;
+}
+
+@media (max-width: 720px) {
+  .tooltip,
+  .tooltip--left {
+    top: calc(100% + 0.25rem);
+    bottom: auto;
+    left: 0;
+    right: 0;
+    width: auto;
+  }
+
+  .tooltip--up {
+    top: auto;
+    bottom: calc(100% + 0.25rem);
+  }
 }
