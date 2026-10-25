@@ -1,0 +1,68 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="wall" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#1d1729" />
+      <stop offset="1" stop-color="#100c19" />
+    </linearGradient>
+    <pattern id="bricks" width="160" height="80" patternUnits="userSpaceOnUse">
+      <path
+        d="M0 0H160M0 40H160M0 80H160M80 0V40M0 40V80M160 40V80"
+        stroke="#2c2340"
+        stroke-width="3"
+        fill="none"
+      />
+    </pattern>
+    <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#27406b" />
+      <stop offset="1" stop-color="#0d1526" />
+    </linearGradient>
+    <radialGradient id="moon" cx="0.5" cy="0.5" r="0.5">
+      <stop offset="0" stop-color="#e8f0ff" stop-opacity="0.9" />
+      <stop offset="1" stop-color="#e8f0ff" stop-opacity="0" />
+    </radialGradient>
+    <radialGradient id="torch" cx="0.5" cy="0.5" r="0.5">
+      <stop offset="0" stop-color="#ff9a3d" stop-opacity="0.55" />
+      <stop offset="1" stop-color="#ff9a3d" stop-opacity="0" />
+    </radialGradient>
+    <linearGradient id="floor" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#1a1320" />
+      <stop offset="1" stop-color="#0a070f" />
+    </linearGradient>
+    <radialGradient id="vignette" cx="0.5" cy="0.5" r="0.75">
+      <stop offset="0.55" stop-color="#000" stop-opacity="0" />
+      <stop offset="1" stop-color="#000" stop-opacity="0.7" />
+    </radialGradient>
+  </defs>
+
+  <rect width="1600" height="900" fill="url(#wall)" />
+  <rect width="1600" height="720" fill="url(#bricks)" />
+
+  <circle cx="800" cy="230" r="220" fill="url(#moon)" />
+  <path d="M700 430V250A100 100 0 0 1 900 250V430Z" fill="url(#sky)" stroke="#3b2f52" stroke-width="12" />
+  <path d="M800 150V430M700 300H900" stroke="#3b2f52" stroke-width="8" />
+  <circle cx="835" cy="215" r="22" fill="#e8f0ff" opacity="0.85" />
+
+  <circle cx="250" cy="330" r="220" fill="url(#torch)" />
+  <circle cx="1350" cy="330" r="220" fill="url(#torch)" />
+  <g fill="#3a2a1e">
+    <rect x="240" y="350" width="20" height="70" />
+    <rect x="1340" y="350" width="20" height="70" />
+  </g>
+  <g fill="#ffb347">
+    <path d="M250 270C225 305 235 335 250 345C265 335 275 305 250 270Z" />
+    <path d="M1350 270C1325 305 1335 335 1350 345C1365 335 1375 305 1350 270Z" />
+  </g>
+
+  <rect x="60" y="560" width="300" height="14" fill="#3a2a1e" />
+  <rect x="1240" y="560" width="300" height="14" fill="#3a2a1e" />
+
+  <rect y="720" width="1600" height="180" fill="url(#floor)" />
+  <path
+    d="M0 780H1600M0 840H1600M200 720V900M520 720V900M880 720V900M1240 720V900"
+    stroke="#2a2030"
+    stroke-width="3"
+    fill="none"
+  />
+
+  <rect width="1600" height="900" fill="url(#vignette)" />
+</svg>
